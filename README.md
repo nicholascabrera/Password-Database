@@ -11,9 +11,15 @@ Users may exit the application upon completing their business with the Password 
 
 ## Features
 The Password Database sports several interesting features, the foremost listed here:
-1. Secure Username and Password Verification via a randomly salted Argon2 Password Hash
-2. Clean GUI via Java Swing
-3. AES Encrypted Password Generation
+1. Secure Username and Password Verification via a randomly salted Argon2 Password Hash offered by the Bouncy Castle JCA provider
+2. Clean and easy-to-navigate GUI via Java Swing
+3. AES Encrypted and Securely Random Password Generation via the JCA
 4. MySQL Database Storage
-5. Secure Anti-SQL Injection features such as Input Verification, Limited Views, and Parameterized Queries
+5. Secure Anti-SQL Injection techniques such as Input Verification with regex, Limited Views and Permissions, and Parameterized Queries
+6. Custom Exception Handling
+
+## User Installation
+Assuming an exe has not yet been uploaded, to run this code yourself, you'll need to download a few things and run a few scripts. Namely, you'll need to download MySQL and run my SQL script to set up the databases, readers, and writers. Once the databases are set up, you'll need to actually open up the database for business using the ```mysqld --console``` command after navigating to the bin folder of your MySQL installation in the terminal.
+
+Assuming you use VS Code, you are now ready to use this program.
 
