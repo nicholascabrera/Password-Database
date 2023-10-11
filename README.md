@@ -5,7 +5,9 @@ To access and generate passwords, users must sign in. The usernames and master p
 
 To clarify, generated passwords are paired with the website or application they allow access to and a username or display name. There are no duplicate usernames and website pairs. Should the user choose to print their generated password database, their usernames, generated passwords, and websites are printed for them to view in the GUI. Similarly, should the user choose to search for generated passwords for a single website, the username, and generated password will be displayed.
 
-Should the user choose to generate a new password, they will be prompted to enter a username and website or application for pairing the generated password. Then, the password generation sequence will begin, in which the user is queried on the specifics of the password they want generated. At the end of the process, the generated password will be graded and presented to the user. Should the user choose to accept the password, it will be encrypted and stored in their database. The user may also choose not to accept the generated password, in which case a new one will be generated and presented.
+Should the user choose to generate a new password, they will be prompted to enter a username and website or application for pairing the generated password. Then, the password generation sequence will begin, in which the user is queried on the specifics of the password they want generated. The generated password will be graded and presented to the user at the end of the process. If the user accepts the password, it will be encrypted and stored in their database. No passwords are stored in the database without being encrypted or hashed. The user may also choose not to accept the generated password, in which case a new one will be generated and presented.
+
+Users may exit the application upon completing their business with the Password Database simply by clicking the red 'X.'
 
 ## Features
 The Password Database sports several interesting features, the foremost listed here:
