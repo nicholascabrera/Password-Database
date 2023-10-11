@@ -1,5 +1,5 @@
 # Password-Database
-The Password Database aims to generate secure passwords and store them for later use.
+The Password Database aims to generate and store passwords for later use securely.
 
 To access and generate passwords, users must sign in. The usernames and master passwords are stored in an SQL Database hosted locally, and everything is securely locked behind a login feature. I utilized the Argon2 hash algorithm, a state-of-the-art (at least for the next year) hashing algorithm that is currently the only dedicated password hashing algorithm. Once users are beyond the log-in window, they are presented with three choices: to print all their generated passwords, print a certain generated password, or generate a new password.
 
