@@ -21,7 +21,7 @@ The Password Database sports several interesting features, the foremost listed h
 6. Custom Exception Handling
 
 ## User Installation
-Assuming an exe has not yet been uploaded, to run this code yourself, you'll need to download a few things and run a few scripts. Namely, you'll need to download MySQL and run my SQL script to set up the databases, readers, and writers. Once the databases are set up, you'll need to actually open up the database for business using the ```mysqld --console``` command after navigating to the bin folder of your MySQL installation in the terminal.
+Assuming an exe or jar file has not yet been uploaded, you'll need to download a few things and run a few scripts to run this code yourself. Namely, you'll need to download MySQL and run my SQL script to set up the databases, readers, and writers. Once the databases are set up, you'll need to actually open up the database for business using the ```mysqld --console``` command after navigating to the bin folder of your MySQL installation in the terminal.
 
 Assuming you use VS Code, you are now ready to use this program.
 
