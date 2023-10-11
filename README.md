@@ -16,9 +16,10 @@ The Password Database sports several interesting features, the foremost listed h
 1. Secure Username and Password Verification via a randomly salted Argon2 Password Hash offered by the Bouncy Castle JCA provider
 2. Clean and easy-to-navigate GUI via Java Swing
 3. AES Encrypted and Securely Random Password Generation via the JCA
-4. MySQL Database Storage
+4. MySQL Database Storage via JDBC
 5. Secure Anti-SQL Injection techniques such as Input Verification with regex, Limited Views and Permissions, and Parameterized Queries
 6. Custom Exception Handling
+7. Maven Build which allows the addition of dependencies for Bouncy Castle and JDBC
 
 ## User Installation
 Assuming an exe or jar file has not yet been uploaded, you'll need to download a few things and run a few scripts to run this code yourself. Namely, you'll need to download MySQL and run my SQL script to set up the databases, readers, and writers. Once the databases are set up, you'll need to actually open up the database for business using the ```mysqld --console``` command after navigating to the bin folder of your MySQL installation in the terminal.
