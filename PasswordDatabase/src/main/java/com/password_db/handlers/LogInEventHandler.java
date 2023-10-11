@@ -1,12 +1,13 @@
 package com.password_db.handlers;
 
-import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.regex.Pattern;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 import com.password_db.cryptography.Password;
 import com.password_db.databases.Database;
@@ -17,12 +18,13 @@ public class LogInEventHandler implements ActionListener {
 
     private Window window;
     private JFrame frame;
-    private TextField userField, passField;
+    private JTextField userField;
+    private JPasswordField passField;
     private String username;
     private Password masterPassword;
     private Database userDatabase;
 
-    public LogInEventHandler(Window window, Database userDatabase, JFrame frame, TextField userField, TextField passField){
+    public LogInEventHandler(Window window, Database userDatabase, JFrame frame, JTextField userField, JPasswordField passField){
         this.window = window;
         this.frame = frame;
         this.userField = userField;
@@ -38,12 +40,12 @@ public class LogInEventHandler implements ActionListener {
             Pattern passwordPattern = Pattern.compile("^[A-Za-z0-9!@#\\$%\\^&\\*\\(\\)~`:/,\\.\\?\"-=_\\+]{10,128}$");
 
             try{
-                if(!userPattern.matcher(this.userField.getText()).matches() || !passwordPattern.matcher(this.passField.getText()).matches()){
+                if(!userPattern.matcher(this.userField.getText()).matches() || !passwordPattern.matcher(new String(this.passField.getPassword())).matches()){
                     throw new InputValidationException("Invalid input.");
                 }
 
                 this.username = this.userField.getText();
-                this.masterPassword = new Password(this.passField.getText());
+                this.masterPassword = new Password(new String(this.passField.getPassword()));
                 if(userDatabase.verifyCredentials(this.username, this.masterPassword)){
                     this.userDatabase.setUsername(this.username);
                     this.userDatabase.setPassword(this.masterPassword);
@@ -53,6 +55,8 @@ public class LogInEventHandler implements ActionListener {
             } catch (InputValidationException err){
                 JOptionPane.showMessageDialog(this.frame, err.getMessage(), "Invalid Validation", 0);
             }
+        } else if (e.getActionCommand() == "reveal"){
+
         }
     }
 }

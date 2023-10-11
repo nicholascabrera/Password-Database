@@ -1,10 +1,10 @@
 package com.password_db.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.TextField;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -13,6 +13,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 
 import com.password_db.cryptography.Password;
@@ -20,13 +22,11 @@ import com.password_db.databases.Database;
 import com.password_db.handlers.LogInEventHandler;
 
 public class Window {
-    private int x_dimension;
-    private int y_dimension;
-    private int x_location;
-    private int y_location;
+    private int x_dimension, y_dimension, x_location, y_location;
     private LogInEventHandler loginHandler;
     private Database userDatabase;
     private String instance;
+    private Color frameColor, paneColor;
 
     public Window(){}
 
@@ -37,6 +37,8 @@ public class Window {
         this.y_location = 100;
         this.userDatabase = new Database("-1", new Password("-1"));
         this.instance = "login";
+        this.frameColor = new Color(0xE8F3FF);
+        this.paneColor = new Color(0xFAFAFA);
         this.getInstance(this.instance);
     }
 
@@ -86,9 +88,15 @@ public class Window {
 
         Container contentPane = loginFrame.getContentPane();
         contentPane.setLayout(new BorderLayout());
+        contentPane.setBackground(this.frameColor);
+
+        JPanel coloredBorderPane = new JPanel();
+        coloredBorderPane.setLayout(new BoxLayout(coloredBorderPane, BoxLayout.PAGE_AXIS));
+        coloredBorderPane.setBackground(contentPane.getBackground());
 
         JPanel textPane = new JPanel();
         textPane.setLayout(new BoxLayout(textPane, BoxLayout.PAGE_AXIS));
+        textPane.setBackground(this.paneColor);
 
         // idea on how to store usernames and passwords without the passwords being stored anywhere in plaintext:
         // username is stored in plain text
@@ -101,23 +109,27 @@ public class Window {
 
         int preferedSize = 200;
 
-        TextField username = new TextField(preferedSize);
-        TextField password = new TextField(preferedSize);
+        textPane.setMinimumSize(new Dimension(preferedSize+20, 150));
+        textPane.setPreferredSize(new Dimension(preferedSize+20, 150));
+        textPane.setMaximumSize(new Dimension(preferedSize+20, 150));
+
+        JTextField username = new JTextField(preferedSize);
+        JPasswordField password = new JPasswordField(preferedSize);
         JButton loginButton = new JButton("Log In");
 
         loginHandler = new LogInEventHandler(this, this.userDatabase, loginFrame, username, password);
 
         username.setMinimumSize(new Dimension(preferedSize, 20));
         password.setMinimumSize(new Dimension(preferedSize, 20));
-        loginButton.setMinimumSize(new Dimension(preferedSize, 20));
+        loginButton.setMinimumSize(new Dimension(preferedSize-10, 20));
 
         username.setPreferredSize(new Dimension(preferedSize, 20));
         password.setPreferredSize(new Dimension(preferedSize, 20));
-        loginButton.setPreferredSize(new Dimension(preferedSize, 20));
+        loginButton.setPreferredSize(new Dimension(preferedSize-10, 20));
 
         username.setMaximumSize(new Dimension(preferedSize, 20));
         password.setMaximumSize(new Dimension(preferedSize, 20));
-        loginButton.setMaximumSize(new Dimension(preferedSize, 20));
+        loginButton.setMaximumSize(new Dimension(preferedSize-10, 20));
 
         username.addActionListener(this.loginHandler);
         password.addActionListener(this.loginHandler);
@@ -125,11 +137,9 @@ public class Window {
         loginButton.setActionCommand("login");
         loginButton.addActionListener(this.loginHandler);
 
-        username.setVisible(true);
-        password.setVisible(true);
-
         JPanel userPane = new JPanel();
         userPane.setLayout(new FlowLayout(FlowLayout.LEFT));
+        userPane.setBackground(textPane.getBackground());
 
         userPane.setMinimumSize(new Dimension(preferedSize, 20));
         userPane.setPreferredSize(new Dimension(preferedSize, 20));
@@ -137,6 +147,7 @@ public class Window {
 
         JPanel passPane = new JPanel();
         passPane.setLayout(new FlowLayout(FlowLayout.LEFT));
+        passPane.setBackground(textPane.getBackground());
 
         passPane.setMinimumSize(new Dimension(preferedSize, 20));
         passPane.setPreferredSize(new Dimension(preferedSize, 20));
@@ -149,11 +160,13 @@ public class Window {
         passPane.add(passLabel);
 
         JPanel buttonPane = new JPanel();
-        buttonPane.setLayout(new FlowLayout(FlowLayout.LEFT));
+        buttonPane.setLayout(new FlowLayout(FlowLayout.CENTER));
+        buttonPane.setBackground(textPane.getBackground());
+        loginButton.setBackground(textPane.getBackground());
 
-        buttonPane.setMinimumSize(new Dimension(preferedSize+14, 30));
-        buttonPane.setPreferredSize(new Dimension(preferedSize+14, 30));
-        buttonPane.setMaximumSize(new Dimension(preferedSize+14, 30));
+        buttonPane.setMinimumSize(new Dimension(preferedSize, 30));
+        buttonPane.setPreferredSize(new Dimension(preferedSize, 30));
+        buttonPane.setMaximumSize(new Dimension(preferedSize, 30));
 
         buttonPane.add(loginButton);
 
@@ -165,10 +178,16 @@ public class Window {
         textPane.add(password);                                                 // adds the password text field
         textPane.add(Box.createRigidArea(new Dimension(0,5)));     // adds an invisible space between the text fields
         textPane.add(buttonPane);
+        textPane.add(Box.createRigidArea(new Dimension(0,5)));     // adds an invisible space between the text fields
         textPane.add(Box.createGlue());                                         // adds extra space to account for window expansion
-        textPane.setBorder(BorderFactory.createEmptyBorder(100,10,100,10));
+        textPane.setBorder(new RoundedBorder(10, this.frameColor, this.paneColor));
 
-        contentPane.add(textPane, BorderLayout.CENTER);
+        coloredBorderPane.add(Box.createGlue());
+        coloredBorderPane.add(textPane);
+        coloredBorderPane.add(Box.createGlue());
+        coloredBorderPane.setBorder(BorderFactory.createEmptyBorder(90, 10, 90, 10));
+
+        contentPane.add(coloredBorderPane, BorderLayout.CENTER);
         loginFrame.pack();
         loginFrame.setVisible(true);
     }
