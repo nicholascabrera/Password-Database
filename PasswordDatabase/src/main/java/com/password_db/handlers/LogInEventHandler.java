@@ -61,7 +61,7 @@ public class LogInEventHandler implements ActionListener, KeyListener {
     }
 
     public void keyPressed(KeyEvent e){
-        if(e.getKeyCode() == KeyEvent.VK_W){
+        if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
             this.frame.dispose();
             System.exit(0);
         }

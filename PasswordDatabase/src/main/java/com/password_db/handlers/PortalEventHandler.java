@@ -25,7 +25,7 @@ public class PortalEventHandler implements ActionListener, KeyListener  {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_W){
+        if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
             this.portalFrame.dispose();
             System.exit(0);
         }

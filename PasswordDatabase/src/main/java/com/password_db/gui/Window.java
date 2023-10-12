@@ -123,11 +123,6 @@ public class Window {
 
         loginHandler = new LogInEventHandler(this, this.userDatabase, loginFrame, username, password);
 
-        loginFrame.addKeyListener(this.loginHandler);
-        username.setFocusable(false);
-        password.setFocusable(false);
-        loginButton.setFocusable(false);
-
         username.setMinimumSize(new Dimension(preferedSize, 20));
         password.setMinimumSize(new Dimension(preferedSize, 20));
         loginButton.setMinimumSize(new Dimension(preferedSize-10, 20));
@@ -141,6 +136,7 @@ public class Window {
         loginButton.setMaximumSize(new Dimension(preferedSize-10, 20));
 
         username.addActionListener(this.loginHandler);
+        username.addKeyListener(this.loginHandler);
         password.addActionListener(this.loginHandler);
         password.addKeyListener(loginHandler);
 
@@ -198,7 +194,6 @@ public class Window {
         coloredBorderPane.setBorder(BorderFactory.createEmptyBorder(90, 10, 90, 10));
 
         contentPane.add(coloredBorderPane, BorderLayout.CENTER);
-        loginFrame.getRootPane().setDefaultButton(loginButton);
         loginFrame.pack();
         loginFrame.setVisible(true);
     }
@@ -227,10 +222,28 @@ public class Window {
 
         Container contentPane = portalFrame.getContentPane();
         contentPane.setLayout(new BorderLayout());
+        contentPane.setBackground(this.frameColor);
 
+        JPanel coloredBorderPane = new JPanel();
+        coloredBorderPane.setLayout(new BoxLayout(coloredBorderPane, BoxLayout.PAGE_AXIS));
+        coloredBorderPane.setBackground(contentPane.getBackground());
+
+        JPanel textPane = new JPanel();
+        textPane.setLayout(new BoxLayout(textPane, BoxLayout.PAGE_AXIS));
+        textPane.setBackground(this.paneColor);
+
+
+
+        
         this.portalHandler = new PortalEventHandler(portalFrame);
-
         portalFrame.addKeyListener(this.portalHandler);
+
+        coloredBorderPane.add(Box.createGlue());
+        coloredBorderPane.add(textPane);
+        coloredBorderPane.add(Box.createGlue());
+        coloredBorderPane.setBorder(BorderFactory.createEmptyBorder(90, 10, 90, 10));
+
+        contentPane.add(coloredBorderPane, BorderLayout.CENTER);
 
         portalFrame.pack();
         portalFrame.setVisible(true);
