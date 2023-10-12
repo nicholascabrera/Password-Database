@@ -20,10 +20,12 @@ import javax.swing.UIManager;
 import com.password_db.cryptography.Password;
 import com.password_db.databases.Database;
 import com.password_db.handlers.LogInEventHandler;
+import com.password_db.handlers.PortalEventHandler;
 
 public class Window {
     private int x_dimension, y_dimension, x_location, y_location;
     private LogInEventHandler loginHandler;
+    private PortalEventHandler portalHandler;
     private Database userDatabase;
     private String instance;
     private Color frameColor, paneColor;
@@ -86,6 +88,8 @@ public class Window {
         loginFrame.setLocation(this.x_location, this.y_location);
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        loginFrame.setResizable(false);
+
         Container contentPane = loginFrame.getContentPane();
         contentPane.setLayout(new BorderLayout());
         contentPane.setBackground(this.frameColor);
@@ -119,6 +123,11 @@ public class Window {
 
         loginHandler = new LogInEventHandler(this, this.userDatabase, loginFrame, username, password);
 
+        loginFrame.addKeyListener(this.loginHandler);
+        username.setFocusable(false);
+        password.setFocusable(false);
+        loginButton.setFocusable(false);
+
         username.setMinimumSize(new Dimension(preferedSize, 20));
         password.setMinimumSize(new Dimension(preferedSize, 20));
         loginButton.setMinimumSize(new Dimension(preferedSize-10, 20));
@@ -133,6 +142,7 @@ public class Window {
 
         username.addActionListener(this.loginHandler);
         password.addActionListener(this.loginHandler);
+        password.addKeyListener(loginHandler);
 
         loginButton.setActionCommand("login");
         loginButton.addActionListener(this.loginHandler);
@@ -188,6 +198,7 @@ public class Window {
         coloredBorderPane.setBorder(BorderFactory.createEmptyBorder(90, 10, 90, 10));
 
         contentPane.add(coloredBorderPane, BorderLayout.CENTER);
+        loginFrame.getRootPane().setDefaultButton(loginButton);
         loginFrame.pack();
         loginFrame.setVisible(true);
     }
@@ -216,6 +227,10 @@ public class Window {
 
         Container contentPane = portalFrame.getContentPane();
         contentPane.setLayout(new BorderLayout());
+
+        this.portalHandler = new PortalEventHandler(portalFrame);
+
+        portalFrame.addKeyListener(this.portalHandler);
 
         portalFrame.pack();
         portalFrame.setVisible(true);
