@@ -9,7 +9,7 @@ To clarify, generated passwords are paired with the website or application they 
 
 Should the user choose to generate a new password, they will be prompted to enter a username and website or application to pair with the generated password. Then, the password generation sequence will begin, in which the user is queried on the specifics of the password they want generated. The generated password will be graded and presented to the user at the end of the process. If the user accepts the password, it will be encrypted with a randomly salted AES cipher and stored in their database. No passwords are stored in the database without being encrypted, as in the case with generated passwords or hashed, as is standard for user login information. The user may also choose not to accept the generated password, in which case a new one will be generated and presented.
 
-Users may exit the application upon completing their business or at any time with the Password Database simply by clicking the red 'X' or with the 'ESC' key.
+Users may exit the application upon completing their business with the Password Database or at any time simply by clicking the red 'X' or with the 'ESC' key.
 
 ## Features
 The Password Database sports several interesting features, the foremost listed here:
