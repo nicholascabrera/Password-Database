@@ -232,11 +232,21 @@ public class Window {
         textPane.setLayout(new BoxLayout(textPane, BoxLayout.PAGE_AXIS));
         textPane.setBackground(this.paneColor);
 
-
-
+        JLabel testLabel1 = new JLabel("test1");
+        JLabel testLabel2 = new JLabel("test2");
         
-        this.portalHandler = new PortalEventHandler(portalFrame);
+        this.portalHandler = new PortalEventHandler(portalFrame, testLabel1, testLabel2);
+
+        testLabel1.addMouseMotionListener(this.portalHandler);
+        testLabel2.addMouseMotionListener(this.portalHandler);
+        
         portalFrame.addKeyListener(this.portalHandler);
+
+        textPane.add(Box.createGlue());
+        textPane.add(testLabel1);
+        textPane.add(Box.createRigidArea(new Dimension(0, 5)));
+        textPane.add(testLabel2);
+        textPane.add(Box.createGlue());
 
         coloredBorderPane.add(Box.createGlue());
         coloredBorderPane.add(textPane);
