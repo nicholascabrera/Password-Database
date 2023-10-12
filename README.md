@@ -19,10 +19,30 @@ The Password Database sports several interesting features, the foremost listed h
 4. MySQL Database Storage via JDBC
 5. Secure Anti-SQL Injection techniques such as Input Verification with regex, Limited Views and Permissions, and Parameterized Queries
 6. Custom Exception Handling
-7. Maven Build, which allows the addition of dependencies for Bouncy Castle and JDBC
+7. Maven Build in VS Code, which allows the addition of dependencies for Bouncy Castle and JDBC
 
 ## User Installation
 Assuming an exe or jar file has not yet been uploaded, you'll need to download a few things and run a few scripts to run this code yourself. Namely, you'll need to download MySQL and run my SQL script to set up the databases, readers, and writers. Once the databases are set up, you'll need to actually open up the database for business using the ```mysqld --console``` command after navigating to the bin folder of your MySQL installation in the terminal.
 
-Assuming you use VS Code, you are now ready to use this program.
+### Scripts
+After navigating to the bin folder of your installed MySQL directory in the terminal and signing in to a non-root user with ```CREATE``` and ```INSERT``` permissions, you will be able to run the ```db_setup.sql``` script. You can do this by running the code below:
 
+```
+SOURCE C:\[directory_script_is_stored_in]\db_setup.sql
+```
+
+Once you have completed this step, you must set up some users. This means you must be logged into a user that can ```GRANT``` permissions to other users, such as ```root```. Be extremely careful when using root, as you can inadvertently cause damage to your system. While in the root, run the following commands:
+
+```
+CREATE USER IF NOT EXISTS 'reader_userDB'@'localhost' IDENTIFIED BY '9XE6g^#^5VB';
+CREATE USER IF NOT EXISTS 'reader_passDB'@'localhost' IDENTIFIED BY 'Gy8KS7^7%a!';
+CREATE USER IF NOT EXISTS 'writer_passDB'@'localhost' IDENTIFIED BY '56zj95!34u3$VB$t';
+
+GRANT SELECT ON user_db.users TO 'reader_userDB'@'localhost';
+GRANT SELECT ON pass_db.app_pass TO 'reader_passDB'@'localhost';
+GRANT INSERT ON pass_db.app_pass TO 'writer_passDB'@'localhost';
+```
+
+These commands are not housed in a file for user reassurance.
+
+After running those commands and assuming you use VS Code, you are now ready to use this program.
