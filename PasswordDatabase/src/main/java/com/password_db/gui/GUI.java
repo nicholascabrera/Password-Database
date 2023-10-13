@@ -27,27 +27,63 @@ import com.password_db.handlers.LogInEventHandler;
 import com.password_db.handlers.PortalEventHandler;
 
 public class GUI {
+    private final boolean LIGHT_MODE = true;
+    private final boolean DARK_MODE = false;
+
     private int x_dimension, y_dimension, x_location, y_location;
     private LogInEventHandler loginHandler;
     private PortalEventHandler portalHandler;
     private Database userDatabase;
     private String instance;
+
+    private boolean colorMode;
+
     private Color frameColor, paneColor, activeColor, containerColor;
+    private Color darkFrameColor, darkPaneColor, darkContainerColor;
+    private Color lightFrameColor, lightPaneColor, lightContainerColor;
 
-    public GUI(){}
-
-    public void init(){
+    public GUI(){
         this.x_dimension = 600;
         this.y_dimension = 400;
         this.x_location = 375;
         this.y_location = 100;
+
         this.userDatabase = new Database("-1", new Password("-1"));
-        this.instance = "login";
-        this.frameColor = new Color(0xE8F3FF);
-        this.paneColor = new Color(0xFAFAFA);
+
+        this.lightFrameColor = new Color(0xE8F3FF);
+        this.lightPaneColor = new Color(0xFAFAFA);
+        this.lightContainerColor = new Color(0xEDEDED);
+
+        this.darkFrameColor = new Color(0x585A5C);
+        this.darkPaneColor = new Color(0x707477);
+        this.darkContainerColor = new Color(0x989DA0);
+
         this.activeColor = new Color(0x96CFFF);
-        this.containerColor = new Color(0xEDEDED);
+    }
+
+    public void init(){
+        this.instance = "login";
+
+        this.setColor(LIGHT_MODE);
         this.setInstance(this.instance);
+    }
+
+    public void setColor(boolean color){
+        if(color){
+            colorMode = LIGHT_MODE;
+            this.frameColor = this.lightFrameColor;
+            this.paneColor = this.lightPaneColor;
+            this.containerColor = this.lightContainerColor;
+        } else {
+            colorMode = DARK_MODE;
+            this.frameColor = this.darkFrameColor;
+            this.paneColor = this.darkPaneColor;
+            this.containerColor = this.darkContainerColor;
+        }
+    }
+
+    public boolean getColor(){
+        return this.colorMode;
     }
 
     public void setInstance(String instance){
@@ -440,16 +476,8 @@ public class GUI {
         welcome.setLayout(new BorderLayout());
         welcome.setBackground(this.paneColor);
 
-        JPanel content = new JPanel();
-        content.setLayout(new BoxLayout(content, BoxLayout.PAGE_AXIS));
-        content.setBackground(this.paneColor);
-
         JLabel welcomeLabel = new JLabel("Welcome back, " + this.getUsername());
         welcomeLabel.setBackground(this.paneColor);
-
-        // welcomeLabel.setMinimumSize(new Dimension(preferedSize/2, 30));
-        // welcomeLabel.setPreferredSize(new Dimension(preferedSize/2, 30));
-        // welcomeLabel.setMaximumSize(new Dimension(preferedSize/2, 30));
 
         welcome.setMinimumSize(new Dimension((preferedSize/2) - 15, buttonHeight-10));
         welcome.setPreferredSize(new Dimension((preferedSize/2) - 15, buttonHeight-10));
@@ -457,13 +485,17 @@ public class GUI {
 
         JPanel containerColorRigidHorizontal = new JPanel();
         containerColorRigidHorizontal.setBackground(containerPane.getBackground());
-        containerColorRigidHorizontal.add(Box.createRigidArea(new Dimension(preferedSize/2, 0)));
+        containerColorRigidHorizontal.add(Box.createRigidArea(new Dimension((preferedSize/2)-10, 0)));
 
         welcome.add(welcomeLabel, BorderLayout.CENTER);
         welcome.setBorder(new RoundedBorder(5, this.containerColor, this.paneColor));
 
         welcomeWrapper.add(welcome);
         welcomeWrapper.add(containerColorRigidHorizontal);
+
+        JPanel content = new JPanel();
+        content.setLayout(new BoxLayout(content, BoxLayout.PAGE_AXIS));
+        content.setBackground(this.paneColor);
 
         JTextField search = new JTextField(preferedSize);
         

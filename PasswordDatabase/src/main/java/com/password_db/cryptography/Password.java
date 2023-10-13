@@ -91,6 +91,8 @@ public class Password {
 
     private boolean setup() {
         boolean generate = false;
+        final int SHOW_AGAIN = 5;
+        final int EMPTY = 0;
 
         do {
             //I need to perform input verification here.
@@ -98,7 +100,7 @@ public class Password {
                 null, "Enter your preferred password length.", "Password Length");
 
             if(input != null){
-                Pattern numPattern = Pattern.compile("^[0-9]?[0-9]?[0-9]$");
+                Pattern numPattern = Pattern.compile("^[0-9]?[0-9]?[0-9]$");    //three digit number from 0-999
 
                 try {
                     if (!numPattern.matcher(input).matches()) { //just checks to see if its a number
@@ -106,24 +108,24 @@ public class Password {
                     } else {
                         generate = true;
                         int entry = Integer.parseInt(input);
-                        if (entry > 127) {
+                        if (entry > 127) {                      //brings upper limit from 999 to 127
                             JOptionPane.showMessageDialog(null, "Password too long! Try again with less than 128!");
-                            this.length = 5;
-                        } else if (entry < 6) {
-                            JOptionPane.showMessageDialog(null, "Password too short! Try again with more than 6!");
-                            this.length = 5;
+                            this.length = SHOW_AGAIN;
+                        } else if (entry < 6) {                 //brings lower limit from 0 to 6
+                            JOptionPane.showMessageDialog(null, "Password too short! Try again with more than 5!");
+                            this.length = SHOW_AGAIN;
                         } else {
-                            this.length = (byte) entry;
+                            this.length = (byte) entry;         //if the number is within the range 6-127, then we allow it to become length.
                         }
                     }
                 } catch (InputValidationException e) {
                     JOptionPane.showMessageDialog(null, e.getMessage(), "Invalid Validation", 0);
-                    this.length = 5;    //sets the length to 5 in preparation to show the password prompt again.
+                    this.length = SHOW_AGAIN;    //sets the length to 5 in preparation to show the password prompt again.
                 }
             } else {
                 evaluate();     //resets the length variable, which should be 0 here. if it isn't, something else is horribly wrong.
             }
-        } while (this.length == 5);
+        } while (this.length == SHOW_AGAIN);
 
         if(generate){
             byte entry = (byte) JOptionPane.showConfirmDialog(
@@ -159,7 +161,8 @@ public class Password {
         }
 
         try{
-            if(!(this.upperCase && this.lowerCase && this.specialChars && this.numbers) && (this.length != 5 && this.length != 0)){   //if they're all false
+            //if they're all false or the length 
+            if(!(this.upperCase || this.lowerCase || this.specialChars || this.numbers) && (this.length != SHOW_AGAIN && this.length != EMPTY)){
                 throw new InputValidationException("Invalid Input, at least one field must be chosen.");
             }
         } catch (InputValidationException e){
