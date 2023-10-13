@@ -159,7 +159,7 @@ public class Password {
         }
 
         try{
-            if(!(this.upperCase && this.lowerCase && this.specialChars && this.numbers)){   //if they're all false
+            if(!(this.upperCase && this.lowerCase && this.specialChars && this.numbers) && (this.length != 5 && this.length != 0)){   //if they're all false
                 throw new InputValidationException("Invalid Input, at least one field must be chosen.");
             }
         } catch (InputValidationException e){
