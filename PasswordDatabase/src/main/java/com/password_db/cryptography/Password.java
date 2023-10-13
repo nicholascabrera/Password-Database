@@ -1,8 +1,11 @@
 package com.password_db.cryptography;
 
 import java.security.SecureRandom;
+import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
+
+import com.password_db.exceptions.InputValidationException;
 
 public class Password {
 
@@ -14,6 +17,8 @@ public class Password {
      * General constructor for the password object.
      */
     public Password() {
+        this.password123 = "";
+        this.evaluate();
     }
 
     /**
@@ -23,6 +28,7 @@ public class Password {
      */
     public Password(byte length) {
         this.length = length;
+        this.evaluate();
     }
 
     /**
@@ -40,6 +46,7 @@ public class Password {
         this.lowerCase = lowerCase;
         this.specialChars = specialChars;
         this.numbers = numbers;
+        this.evaluate();
     }
 
     public Password(String p){
@@ -55,95 +62,114 @@ public class Password {
     }
 
     private void generatePassword() {
-        this.setup();
-        this.insert();
-        byte passwordStrength = (byte) this.strengthTest();
-        String outputMSG = "";
+        if(this.setup()){
+            this.insert();
+            byte passwordStrength = (byte) this.strengthTest();
+            String outputMSG = "";
 
-        if (passwordStrength > -1){
-            outputMSG = outputMSG.concat("Congrats on your new password below!\n" + this.password123 +"\n");
-            if (passwordStrength == 6) {
-                outputMSG = outputMSG.concat("This is an excellent password!");
-            } else if (passwordStrength >= 4) {
-                outputMSG = outputMSG.concat("This is a good password, but you can still do better.");
-            } else if (passwordStrength >= 3) {
-                outputMSG = outputMSG.concat("This is not a suitable password, so try making it better.");
-            } else {
-                outputMSG = outputMSG.concat("This is an insecure password! Definitely find a new one.");
-            }
-        } else {
-            System.out.println("Bad password strength call.");
-        }
-
-        outputMSG = outputMSG.concat("\nGenerate new password?");
-        
-        byte entry = (byte) JOptionPane.showConfirmDialog(null, outputMSG, "Password Generated!", 0);
-        this.regenerate = (entry == JOptionPane.YES_OPTION) ? true : false;
-    }
-    
-    /**
-     * @param strNum
-     * @return
-     */
-    private boolean isNumeric(String strNum) {
-        if (strNum == null) {
-            return false;
-        }
-        try {
-            Integer.parseInt(strNum);
-        } catch (NumberFormatException nfe) {
-            return false;
-        }
-        return true;
-    }
-
-    private void setup() {
-        do {
-            String input = JOptionPane.showInputDialog(
-                null, "Enter your preferred password length.", "Password Length");
-            if(input != null && !(input == null || ("".equals(input))) && this.isNumeric(input))   
-            {
-                int entry = Integer.parseInt(input);
-                if (entry > 127) {
-                    JOptionPane.showMessageDialog(null, "Password too long! Try again with less than 128!");
+            if (passwordStrength > -1){
+                outputMSG = outputMSG.concat("Congrats on your new password below!\n" + this.password123 +"\n");
+                if (passwordStrength == 6) {
+                    outputMSG = outputMSG.concat("This is an excellent password!");
+                } else if (passwordStrength >= 4) {
+                    outputMSG = outputMSG.concat("This is a good password, but you can still do better.");
+                } else if (passwordStrength >= 3) {
+                    outputMSG = outputMSG.concat("This is not a suitable password, so try making it better.");
                 } else {
-                    this.length = (byte) entry;
+                    outputMSG = outputMSG.concat("This is an insecure password! Definitely find a new one.");
                 }
             } else {
-                System.exit(0);
+                System.out.println("Bad password strength call.");
             }
-        } while (this.length == -1);
 
-        byte entry = (byte) JOptionPane.showConfirmDialog(
-            null, "Will your password use upper case letters?","Password Specifications", 0);
-        if (entry == JOptionPane.YES_OPTION) {
-            this.upperCase = true;
-        } else {
-            this.upperCase = false;
+            outputMSG = outputMSG.concat("\nGenerate new password?");
+            
+            byte entry = (byte) JOptionPane.showConfirmDialog(null, outputMSG, "Password Generated!", 0);
+            this.regenerate = (entry == JOptionPane.YES_OPTION) ? true : false;
+        }
+    }
+
+    private boolean setup() {
+        boolean generate = false;
+
+        do {
+            //I need to perform input verification here.
+            String input = JOptionPane.showInputDialog(
+                null, "Enter your preferred password length.", "Password Length");
+
+            if(input != null){
+                Pattern numPattern = Pattern.compile("^[0-9]?[0-9]?[0-9]$");
+
+                try {
+                    if (!numPattern.matcher(input).matches()) { //just checks to see if its a number
+                        throw new InputValidationException("Invalid input. Only number between 6 - 127 allowed.");
+                    } else {
+                        generate = true;
+                        int entry = Integer.parseInt(input);
+                        if (entry > 127) {
+                            JOptionPane.showMessageDialog(null, "Password too long! Try again with less than 128!");
+                            this.length = 5;
+                        } else if (entry < 6) {
+                            JOptionPane.showMessageDialog(null, "Password too short! Try again with more than 6!");
+                            this.length = 5;
+                        } else {
+                            this.length = (byte) entry;
+                        }
+                    }
+                } catch (InputValidationException e) {
+                    JOptionPane.showMessageDialog(null, e.getMessage(), "Invalid Validation", 0);
+                    this.length = 5;    //sets the length to 5 in preparation to show the password prompt again.
+                }
+            } else {
+                evaluate();     //resets the length variable, which should be 0 here. if it isn't, something else is horribly wrong.
+            }
+        } while (this.length == 5);
+
+        if(generate){
+            byte entry = (byte) JOptionPane.showConfirmDialog(
+                null, "Will your password use upper case letters?","Password Specifications", 0);
+            if (entry == JOptionPane.YES_OPTION) {
+                this.upperCase = true;
+            } else {
+                this.upperCase = false;
+            }
+
+            entry = (byte) JOptionPane.showConfirmDialog(
+                null, "Will your password use lower case letters?","Password Specifications", 0);
+            if (entry == JOptionPane.YES_OPTION) {
+                this.lowerCase = true;
+            } else {
+                this.lowerCase = false;
+            }
+
+            entry = (byte) JOptionPane.showConfirmDialog(
+                null, "Will your password use special characters?","Password Specifications", 0);
+            if (entry == JOptionPane.YES_OPTION) {
+                this.specialChars = true;
+            } else {
+                this.specialChars = false;
+            }
+
+            entry = (byte) JOptionPane.showConfirmDialog(null, "Will your password use numbers?", "Password Specifications", 0);
+            if (entry == JOptionPane.YES_OPTION) {
+                this.numbers = true;
+            } else {
+                this.numbers = false;
+            }
         }
 
-        entry = (byte) JOptionPane.showConfirmDialog(
-            null, "Will your password use lower case letters?","Password Specifications", 0);
-        if (entry == JOptionPane.YES_OPTION) {
-            this.lowerCase = true;
-        } else {
-            this.lowerCase = false;
+        try{
+            if(!(this.upperCase && this.lowerCase && this.specialChars && this.numbers)){   //if they're all false
+                throw new InputValidationException("Invalid Input, at least one field must be chosen.");
+            }
+        } catch (InputValidationException e){
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Invalid Validation", 0);
+            generate = false;
+            evaluate();
         }
+        
 
-        entry = (byte) JOptionPane.showConfirmDialog(
-            null, "Will your password use special characters?","Password Specifications", 0);
-        if (entry == JOptionPane.YES_OPTION) {
-            this.specialChars = true;
-        } else {
-            this.specialChars = false;
-        }
-
-        entry = (byte) JOptionPane.showConfirmDialog(null, "Will your password use numbers?", "Password Specifications", 0);
-        if (entry == JOptionPane.YES_OPTION) {
-            this.numbers = true;
-        } else {
-            this.numbers = false;
-        }
+        return generate;
     }
 
     /**
@@ -190,7 +216,7 @@ public class Password {
              * (byte)(...)                          I convert the integer number range to a byte number range.
              */
             byte caseNum = (byte)Math.abs((byte)(4*((float)randoms[0] / 128.0)));
-            
+
             switch (caseNum) {
                 case 0: // Uppercase letter
                     if (this.upperCase){        //if the user wants to use uppercase letters, insert.

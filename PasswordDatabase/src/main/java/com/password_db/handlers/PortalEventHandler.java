@@ -8,12 +8,16 @@ import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
 
+import com.password_db.cryptography.Password;
+import com.password_db.gui.GUI;
+
 public class PortalEventHandler implements ActionListener, KeyListener  {
 
     private JFrame portalFrame;
 
     //light v dark mode
     private boolean colorMode;
+    private GUI window;
     // private Color paneColor = new Color(0xFAFAFA);
     // private Color darkPaneColor = new Color(0xFAFAFA);
     // private Color frameColor = new Color(0xE8F3FF);
@@ -21,8 +25,9 @@ public class PortalEventHandler implements ActionListener, KeyListener  {
 
     
 
-    public PortalEventHandler(JFrame portalFrame){
+    public PortalEventHandler(GUI window, JFrame portalFrame){
         this.portalFrame = portalFrame;
+        this.window = window;
         this.colorMode = true;   //true is light, false is dark
     }
 
@@ -35,6 +40,14 @@ public class PortalEventHandler implements ActionListener, KeyListener  {
             } else {
                 // set everything to the dark mode colors
             }
+        } else if (e.getActionCommand() == "logout"){
+            this.window.setUsername("");
+            this.window.setPassword(new Password());
+            this.window.setInstance("login");
+            this.portalFrame.dispose();
+        } else if(e.getActionCommand() == "generate"){
+            Password newPassword = new Password();
+            newPassword.init();
         }
     }
 

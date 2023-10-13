@@ -51,7 +51,7 @@ public class LogInEventHandler implements ActionListener, KeyListener {
                 if(userDatabase.verifyCredentials(this.username, this.masterPassword)){
                     this.userDatabase.setUsername(this.username);
                     this.userDatabase.setPassword(this.masterPassword);
-                    this.window.getInstance("portal");
+                    this.window.setInstance("portal");
                     this.frame.dispose();
                 }
             } catch (InputValidationException err){
@@ -85,7 +85,7 @@ public class LogInEventHandler implements ActionListener, KeyListener {
                 if(userDatabase.verifyCredentials(this.username, this.masterPassword)){
                     this.userDatabase.setUsername(this.username);
                     this.userDatabase.setPassword(this.masterPassword);
-                    this.window.getInstance("portal");
+                    this.window.setInstance("portal");
                     this.frame.dispose();
                 }
             } catch (InputValidationException err){

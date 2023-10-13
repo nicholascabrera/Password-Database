@@ -47,10 +47,10 @@ public class GUI {
         this.paneColor = new Color(0xFAFAFA);
         this.activeColor = new Color(0x96CFFF);
         this.containerColor = new Color(0xEDEDED);
-        this.getInstance(this.instance);
+        this.setInstance(this.instance);
     }
 
-    public void getInstance(String instance){
+    public void setInstance(String instance){
         switch(instance){
             case "login":
                 this.instance = "login";
@@ -342,6 +342,7 @@ public class GUI {
         generateButton.setBorderPainted(false);
         generateButton.setFocusPainted(false);
         generateButton.setOpaque(true);
+
         generateButton.getModel().addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -354,6 +355,9 @@ public class GUI {
             }
         });
 
+        generateButton.setActionCommand("generate");
+
+
         final JButton signoutButton = new JButton("Sign Out");
         signoutButton.setMinimumSize(new Dimension(buttonWidth, buttonHeight));
         signoutButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
@@ -364,6 +368,7 @@ public class GUI {
         signoutButton.setBorderPainted(false);
         signoutButton.setFocusPainted(false);
         signoutButton.setOpaque(true);
+
         signoutButton.getModel().addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -375,6 +380,8 @@ public class GUI {
                 }
             }
         });
+
+        signoutButton.setActionCommand("logout");;
 
 
         final JButton aboutButton = new JButton("About");
@@ -399,9 +406,12 @@ public class GUI {
             }
         });
 
-        this.portalHandler = new PortalEventHandler(portalFrame);
+        this.portalHandler = new PortalEventHandler(this, portalFrame);
         
         portalFrame.addKeyListener(this.portalHandler);
+        signoutButton.addActionListener(this.portalHandler);
+        generateButton.addActionListener(this.portalHandler);
+
 
         menuPane.add(accountButton);
         menuPane.add(settingsButton);
@@ -535,5 +545,13 @@ public class GUI {
 
     public Password getPassword(){
         return this.userDatabase.getPassword();
+    }
+
+    public void setUsername(String username){
+        this.userDatabase.setUsername(username);
+    }
+
+    public void setPassword(Password password){
+        this.userDatabase.setPassword(password);
     }
 }
