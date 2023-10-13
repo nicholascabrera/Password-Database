@@ -14,11 +14,11 @@ import javax.swing.JTextField;
 import com.password_db.cryptography.Password;
 import com.password_db.databases.Database;
 import com.password_db.exceptions.InputValidationException;
-import com.password_db.gui.Window;
+import com.password_db.gui.GUI;
 
 public class LogInEventHandler implements ActionListener, KeyListener {
 
-    private Window window;
+    private GUI window;
     private JFrame frame;
     private JTextField userField;
     private JPasswordField passField;
@@ -26,7 +26,7 @@ public class LogInEventHandler implements ActionListener, KeyListener {
     private Password masterPassword;
     private Database userDatabase;
 
-    public LogInEventHandler(Window window, Database userDatabase, JFrame frame, JTextField userField, JPasswordField passField){
+    public LogInEventHandler(GUI window, Database userDatabase, JFrame frame, JTextField userField, JPasswordField passField){
         this.window = window;
         this.frame = frame;
         this.userField = userField;

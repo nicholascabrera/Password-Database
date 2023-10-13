@@ -2,7 +2,7 @@ package com.password_db.service;
 
 import com.password_db.cryptography.Password;
 import com.password_db.cryptography.SecureObject;
-import com.password_db.gui.Window;
+import com.password_db.gui.GUI;
 
 public class Main {
     /**
@@ -36,7 +36,7 @@ public class Main {
      */
     public static void main(String[] args) throws Exception {
         // start up window and initialize for login requirement
-        Window window = new Window();
+        GUI window = new GUI();
         window.init();
 
         // wait until the login has been entered, which is known because the instance changes
