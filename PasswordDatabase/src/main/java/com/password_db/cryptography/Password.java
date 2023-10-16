@@ -57,6 +57,7 @@ public class Password {
     public void init(){
         do{
             this.password123 = "";
+            this.evaluate();
             this.generatePassword();
         } while (regenerate);
     }

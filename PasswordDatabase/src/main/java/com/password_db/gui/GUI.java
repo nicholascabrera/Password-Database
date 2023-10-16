@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -16,7 +17,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -53,6 +56,7 @@ public class GUI {
         this.lightFrameColor = new Color(0xE8F3FF);
         this.lightPaneColor = new Color(0xFAFAFA);
         this.lightContainerColor = new Color(0xEDEDED);
+        // this.lightContainerColor = new Color(0x8FEDEDED, true);
 
         this.darkFrameColor = new Color(0x585A5C);
         this.darkPaneColor = new Color(0x707477);
@@ -503,18 +507,19 @@ public class GUI {
         search.setPreferredSize(new Dimension(preferedSize, 20));
         search.setMaximumSize(new Dimension(preferedSize, 20));
 
-        JTextField passwords = new JTextField(preferedSize);
+        JTextArea passwords = new JTextArea(5, preferedSize);
         passwords.setEditable(false);
+        passwords.setLineWrap(true);
+        passwords.setFont(new Font("Arial", Font.PLAIN, 10));
 
-        passwords.setText("");
+        passwords.setText("this is where usernames, websites, and passwords will be stored.");
 
-        JScrollPane view = new JScrollPane();
+        JScrollPane view = new JScrollPane(passwords);
+        view.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         view.setMinimumSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
         view.setPreferredSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
         view.setMaximumSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
-
-        view.add(passwords);
 
         JPanel containerColorRigidVertical = new JPanel();
         containerColorRigidVertical.setBackground(containerPane.getBackground());
