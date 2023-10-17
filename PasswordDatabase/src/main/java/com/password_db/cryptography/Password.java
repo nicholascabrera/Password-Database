@@ -1,10 +1,12 @@
 package com.password_db.cryptography;
 
 import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
+import com.password_db.databases.Database;
 import com.password_db.exceptions.InputValidationException;
 
 public class Password {
@@ -54,12 +56,86 @@ public class Password {
         this.evaluate();
     }
 
-    public void init(){
+    public void init(Database database){
+
+        String username = this.getUsername();
+        String website = this.getWebsite();
+        
         do{
             this.password123 = "";
             this.evaluate();
             this.generatePassword();
         } while (regenerate);
+
+        byte entry = (byte) JOptionPane.showConfirmDialog(null, "Do you want to store your password?", "Store?", 0);
+        if (entry == JOptionPane.YES_OPTION) {  // if the user wants to store their password, it must be encrypted.
+            
+
+            // prepare to encrypt the password.
+            SecureObject s = new SecureObject();
+            byte[] salt = SecureObject.generateSalt(128);
+
+            // encrypt the password. It is ready to store.
+            byte[] encryptedPassword = s.encrypt(password123);
+
+            // prepare to encrypt the key.
+            Password masterPassword = database.getPassword();
+            String key = s.getKey();
+
+            try{    // encrypt the key. It is ready to store.
+                byte[] encryptedKey = s.encrypt(Base64.getDecoder().decode(key), masterPassword);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+
+            // concatenate the username and website, then hash it to use as the ID.
+            String userWeb = username.concat(website);
+            byte[] hashSalt = Base64.getDecoder().decode("ABCDEFGHIJKLMNOP");
+            String id = s.argonHash(userWeb, hashSalt);     //ID has been created. It is ready to store.
+        }
+    }
+
+    private String getWebsite() {
+        String website = "\n";
+        do{
+            String input = JOptionPane.showInputDialog(null, "What Website/Application is this for?", "Website/Application");
+            Pattern inputPattern = Pattern.compile("^[A-Za-z0-9]{0-20}$");
+
+            try{
+                if (!inputPattern.matcher(input).matches()) { //checks to see if its a valid website name
+                    throw new InputValidationException("Invalid input. Only letters and numbers allowed.");
+                } else {
+                    website = input;
+                }
+            } catch (InputValidationException e){
+                JOptionPane.showMessageDialog(null, e.getMessage(), "Input Validation", 0);
+            }
+
+        } while (website.equals("\n"));
+
+        return website;
+    }
+
+    private String getUsername() {
+        String username = "\n";
+
+        do{
+            String input = JOptionPane.showInputDialog(null, "Enter your username:", "Website/Application");
+            Pattern inputPattern = Pattern.compile("^[A-Za-z0-9.]{3,20}$");
+
+            try{
+                if (!inputPattern.matcher(input).matches()) { //checks to see if its a valid username
+                    throw new InputValidationException("Invalid input. Only letters and numbers allowed, length must be greater than 3 but less than 20.");
+                } else {
+                    username = input;
+                }
+            } catch (InputValidationException e){
+                JOptionPane.showMessageDialog(null, e.getMessage(), "Input Validation", 0);
+            }
+
+        } while (username.equals("\n"));
+
+        return username;
     }
 
     private void generatePassword() {

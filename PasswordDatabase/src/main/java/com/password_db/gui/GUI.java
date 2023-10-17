@@ -37,6 +37,7 @@ public class GUI {
     private LogInEventHandler loginHandler;
     private PortalEventHandler portalHandler;
     private Database userDatabase;
+    private Database generatedDatabase;
     private String instance;
 
     private boolean colorMode;
@@ -52,6 +53,7 @@ public class GUI {
         this.y_location = 100;
 
         this.userDatabase = new Database("-1", new Password("-1"));
+        this.generatedDatabase = new Database();
 
         this.lightFrameColor = new Color(0xE8F3FF);
         this.lightPaneColor = new Color(0xFAFAFA);
@@ -446,7 +448,7 @@ public class GUI {
             }
         });
 
-        this.portalHandler = new PortalEventHandler(this, portalFrame);
+        this.portalHandler = new PortalEventHandler(this, portalFrame, this.generatedDatabase);
         
         portalFrame.addKeyListener(this.portalHandler);
         signoutButton.addActionListener(this.portalHandler);

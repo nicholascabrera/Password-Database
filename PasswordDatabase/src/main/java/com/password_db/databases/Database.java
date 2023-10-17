@@ -68,7 +68,7 @@ public class Database {
       ){
          SecureObject s = new SecureObject();
 
-         byte[] salt = s.generateSalt(128);
+         byte[] salt = SecureObject.generateSalt(128);
          String passwordHash = s.argonHash(masterPassword, salt);
 
          String query = "INSERT INTO pass_db.app_pass VALUES (?, ?, ?)";       // insert the id, hashed password, and its salt.

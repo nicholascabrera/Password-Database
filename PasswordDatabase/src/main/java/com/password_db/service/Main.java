@@ -55,10 +55,10 @@ public class Main {
         // easy way to check that login information was received
         System.out.printf("Username: %s\n", username);
         System.out.printf("Password: %s\n", masterPassword.getPassword());
-        
 
-        // check to see if the database contains the login information (this step is in the LogInEventHandler)
+        // check to see if the database contains the login information
         // if it does, go on to the next step (2)
+        // See the LogInEventHandler
 
         // if the username matches but the password doesn't, it re-prompts
 
@@ -68,33 +68,41 @@ public class Main {
 
         // if you say no, then you are re-prompted
 
+
+
         SecureObject s = new SecureObject();
         s.init();
+
+        // Password gPassword = new Password("password123456");
         
-        // byte[] salt = s.generateSalt(128);
+        // System.out.println("Un-encrypted Password: " + gPassword.getPassword());
+        // byte[] salt = SecureObject.generateSalt(128);
         // System.out.println("Salt: " + Base64.getEncoder().encodeToString(salt));
-        // System.out.print(s.argonHash(password, salt));
+        // System.out.print("Hashed Password:" + s.argonHash(gPassword, salt));
 
 
         // Password generatedPassword = new Password();
         // generatedPassword.init();
 
-
-
-        // Password password = new Password("password123");          //create a master password
-        // System.out.println("Plain Key: "+password.getPassword());   //print the master password
-
-        // String plainKey = s.getKey();
-        // System.out.println("Plain text: "+plainKey);
-
-        // // byte[] cipher = s.encrypt(plain);                        //encrypt the password
+        // byte[] encryptedPassword = s.encrypt(gPassword.getPassword());
         
-        // byte[] encryptedKey = s.encrypt(password);
+        // byte[] salt = Base64.getDecoder().decode("Pe7eKyPt3yzbmEES+kJwyg==");
+        // byte[] encryptedPassword = Base64.getDecoder().decode("o4/Mea+MJ8E6tccmyP69zQ==");
+        // System.out.println("Encrypted Password: " + Base64.getEncoder().encodeToString(encryptedPassword));
+        
+        // Password mPassword = new Password("masterpassword1234");
+        // System.out.println("\nKey for the Key: "+mPassword.getPassword());   //print the master password
 
-        // String decryptedKey = s.decrypt(encryptedKey, password);
+        // String plainKey = "k4kmqgybAEnvNrPpq5AMY728Sis8I9ICM8e5M734gmM=";
+        // System.out.println("Plain key: "+plainKey);
+        
+        // byte[] encryptedKey = s.encrypt(Base64.getDecoder().decode(plainKey), mPassword);
+        // System.out.println("Encrypted key: " + Base64.getEncoder().encodeToString(encryptedKey));
 
-        // plain = s.decrypt(cipher);
+        // String decryptedKey = s.decrypt(encryptedKey, mPassword);
+        // System.out.println("Decrypted Key: " + decryptedKey);
 
-        //Database dbconn = new Database();
+        // String decryptedString = s.decrypt(encryptedPassword, Base64.getDecoder().decode(decryptedKey), salt);
+        // System.out.println("Decrypted Password: " + decryptedString);
     }
 }

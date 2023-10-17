@@ -9,11 +9,13 @@ import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 
 import com.password_db.cryptography.Password;
+import com.password_db.databases.Database;
 import com.password_db.gui.GUI;
 
 public class PortalEventHandler implements ActionListener, KeyListener  {
 
     private JFrame portalFrame;
+    private Database generated_db;
 
     //light v dark mode
     private boolean colorMode;
@@ -25,9 +27,10 @@ public class PortalEventHandler implements ActionListener, KeyListener  {
 
     
 
-    public PortalEventHandler(GUI window, JFrame portalFrame){
+    public PortalEventHandler(GUI window, JFrame portalFrame, Database generated_db){
         this.portalFrame = portalFrame;
         this.window = window;
+        this.generated_db = generated_db;
         this.colorMode = true;   //true is light, false is dark
     }
 
@@ -47,7 +50,7 @@ public class PortalEventHandler implements ActionListener, KeyListener  {
             this.portalFrame.dispose();
         } else if(e.getActionCommand() == "generate"){
             Password newPassword = new Password();
-            newPassword.init();
+            newPassword.init(this.generated_db);
         }
     }
 
