@@ -167,4 +167,56 @@ public class Database {
 
       return credentialsVerified;
    }
+
+   public boolean storeGeneratedPassword(String ID, String website, String username, String password, String salt, String key){
+      try (
+         Connection conn = DriverManager.getConnection(
+            "jdbc:mysql://localhost:3306/generated_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
+            "writer_generatedDB", "67&7tP4f@PYcx") // this is the database reader. It has a limited view (pass_db)
+            // and read-only access.
+      ) {
+
+         String query = "INSERT INTO generated_db.website_users VALUES (?, ?, ?)"; // insert the id, website, and username
+
+         PreparedStatement prepped = conn.prepareStatement(query); // use parameterized queries to prevent SQL injection.
+         prepped.setString(1, ID); // substitute the input ID for the 1st '?'
+         prepped.setString(2, website); // sub the website
+         prepped.setString(3, username); // sub the username
+
+         int rowsAffected = prepped.executeUpdate(); // execute the SQL insertion
+
+         query = "INSERT INTO generated_db.e_passwords VALUES (?, ?)"; // insert the ID and generated password
+
+         prepped = conn.prepareStatement(query);
+         prepped.setString(1, ID); // substitute the input ID for the first parameter
+         prepped.setString(2, password); // sub out the generated password for the second parameter.
+
+         rowsAffected = prepped.executeUpdate(); // execute insertion
+
+         query = "INSERT INTO generated_db.e_keys VALUES (?, ?, ?)"; // insert the ID, key, and salt.
+
+         prepped = conn.prepareStatement(query);
+         prepped.setString(1, ID); // insert the ID
+         prepped.setString(2, key); // insert the key
+         prepped.setString(3, salt); // insert the salt
+
+         rowsAffected = prepped.executeUpdate(); // execute
+
+         if (rowsAffected > 0) {
+            return true;
+         }
+
+      } catch (SQLException e) {
+         e.printStackTrace();
+      }
+      return false;
+   }
+
+   public void pullPassword(){
+      // in order to pull the passwords, the reader will read the recorded username and website from website_users
+      // concatenate them with the master username and master password the user provides, then checks to see if it matches the 
+      // ID recorded in the table. Then and only then, will they reader pull from e_passwords and e_keys.
+      // "reader_senes: #js7qBD5#Y8xG"
+      // "reader_uspa: d7*jNc5dZz9z@"
+   }
 }

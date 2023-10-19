@@ -50,7 +50,12 @@ public class PortalEventHandler implements ActionListener, KeyListener  {
             this.portalFrame.dispose();
         } else if(e.getActionCommand() == "generate"){
             Password newPassword = new Password();
-            newPassword.init(this.generated_db);
+            try{
+                newPassword.init(this.generated_db);
+            } catch (Exception err){
+                err.printStackTrace();
+            }
+
         }
     }
 

@@ -56,10 +56,16 @@ public class Password {
         this.evaluate();
     }
 
-    public void init(Database database){
+    public void init(Database database) throws Exception{
 
         String username = this.getUsername();
+        if (username.equals("")){
+            return;
+        }
         String website = this.getWebsite();
+        if(website.equals("")){
+            return;
+        }
         
         do{
             this.password123 = "";
@@ -69,10 +75,10 @@ public class Password {
 
         byte entry = (byte) JOptionPane.showConfirmDialog(null, "Do you want to store your password?", "Store?", 0);
         if (entry == JOptionPane.YES_OPTION) {  // if the user wants to store their password, it must be encrypted.
-            
 
             // prepare to encrypt the password.
             SecureObject s = new SecureObject();
+            s.init();
             byte[] salt = SecureObject.generateSalt(128);
 
             // encrypt the password. It is ready to store.
@@ -82,33 +88,43 @@ public class Password {
             Password masterPassword = database.getPassword();
             String key = s.getKey();
 
-            try{    // encrypt the key. It is ready to store.
-                byte[] encryptedKey = s.encrypt(Base64.getDecoder().decode(key), masterPassword);
-            } catch (Exception e){
-                e.printStackTrace();
-            }
+            // encrypt the key. It is ready to store.
+            byte[] encryptedKey = s.encrypt(Base64.getDecoder().decode(key), masterPassword);
 
-            // concatenate the username and website, then hash it to use as the ID.
-            String userWeb = username.concat(website);
+            // concatenate the website username, website, and master username, then hash it to use as the ID.
+            String identifier = ((username.concat(website)).concat(database.getUsername())).concat(masterPassword.getPassword());
             byte[] hashSalt = Base64.getDecoder().decode("ABCDEFGHIJKLMNOP");
-            String id = s.argonHash(userWeb, hashSalt);     //ID has been created. It is ready to store.
+            String id = s.argonHash(identifier, hashSalt);     // ID has been created. It is ready to store.
+
+            // perform storing operations.
+            if(database.storeGeneratedPassword(id, website, username, 
+                Base64.getEncoder().encodeToString(encryptedPassword), 
+                Base64.getEncoder().encodeToString(salt), 
+                Base64.getEncoder().encodeToString(encryptedKey)))
+            {
+                System.out.println("Data storage completed successfuly.");
+            }
         }
     }
 
     private String getWebsite() {
         String website = "\n";
         do{
-            String input = JOptionPane.showInputDialog(null, "What Website/Application is this for?", "Website/Application");
-            Pattern inputPattern = Pattern.compile("^[A-Za-z0-9]{0-20}$");
+            String input = JOptionPane.showInputDialog(null, "What Website/Application is this for?");
+            Pattern inputPattern = Pattern.compile("^[A-Za-z0-9]{0,20}$");
 
-            try{
-                if (!inputPattern.matcher(input).matches()) { //checks to see if its a valid website name
-                    throw new InputValidationException("Invalid input. Only letters and numbers allowed.");
-                } else {
-                    website = input;
+            if(input != null){
+                try{
+                    if (!inputPattern.matcher(input).matches()) { //checks to see if its a valid website name
+                        throw new InputValidationException("Invalid input. Only letters and numbers allowed.");
+                    } else {
+                        website = input;
+                    }
+                } catch (InputValidationException e){
+                    JOptionPane.showMessageDialog(null, e.getMessage(), "Input Validation", 0);
                 }
-            } catch (InputValidationException e){
-                JOptionPane.showMessageDialog(null, e.getMessage(), "Input Validation", 0);
+            } else {
+                website = "";
             }
 
         } while (website.equals("\n"));
@@ -120,17 +136,21 @@ public class Password {
         String username = "\n";
 
         do{
-            String input = JOptionPane.showInputDialog(null, "Enter your username:", "Website/Application");
+            String input = JOptionPane.showInputDialog(null, "Enter your username:");
             Pattern inputPattern = Pattern.compile("^[A-Za-z0-9.]{3,20}$");
 
-            try{
-                if (!inputPattern.matcher(input).matches()) { //checks to see if its a valid username
-                    throw new InputValidationException("Invalid input. Only letters and numbers allowed, length must be greater than 3 but less than 20.");
-                } else {
-                    username = input;
+            if(input != null){
+                try{
+                    if (!inputPattern.matcher(input).matches()) { //checks to see if its a valid username
+                        throw new InputValidationException("Invalid input. Only letters and numbers allowed, length must be greater than 3 but less than 20.");
+                    } else {
+                        username = input;
+                    }
+                } catch (InputValidationException e){
+                    JOptionPane.showMessageDialog(null, e.getMessage(), "Input Validation", 0);
                 }
-            } catch (InputValidationException e){
-                JOptionPane.showMessageDialog(null, e.getMessage(), "Input Validation", 0);
+            } else {
+                username = "";
             }
 
         } while (username.equals("\n"));
@@ -274,7 +294,7 @@ public class Password {
          *                                      has been randomly generated above.
          * Character.toString(...)              Convert the returned character into a string, which is now ready for concatenation.
          */
-        return Character.toString(abc.getCharacter(charCase, (Math.abs((byte)(abc.getLength(charCase)*((float)randomNumber / 128.0))))));
+        return Character.toString(abc.getCharacter(charCase, (Math.abs((byte)((abc.getLength(charCase)-1)*((float)randomNumber / 128.0))))));
     }
 
     private void insert() {

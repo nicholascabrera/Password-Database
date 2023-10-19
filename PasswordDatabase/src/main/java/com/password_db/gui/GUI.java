@@ -125,7 +125,7 @@ public class GUI {
             e.printStackTrace();
         }
 
-        JFrame loginFrame = new JFrame("Password Generator - Log In");
+        JFrame loginFrame = new JFrame("Orchid - Log In");
         loginFrame.setPreferredSize(new Dimension(this.x_dimension, this.y_dimension));
         loginFrame.setLocation(this.x_location, this.y_location);
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -173,6 +173,8 @@ public class GUI {
         JButton loginButton = new JButton("Log In");
 
         loginHandler = new LogInEventHandler(this, this.userDatabase, loginFrame, username, password);
+        this.generatedDatabase.setPassword(userDatabase.getPassword());
+        this.generatedDatabase.setUsername(userDatabase.getUsername());
 
         username.setMinimumSize(new Dimension(preferedSize, 20));
         password.setMinimumSize(new Dimension(preferedSize, 20));
@@ -286,7 +288,7 @@ public class GUI {
             e.printStackTrace();
         }
 
-        JFrame portalFrame = new JFrame("Password Generator - Portal");
+        JFrame portalFrame = new JFrame("Orchid - Portal");
         portalFrame.setPreferredSize(new Dimension(this.x_dimension, this.y_dimension));
         portalFrame.setLocation(this.x_location, this.y_location);
         portalFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
