@@ -6,6 +6,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -46,6 +47,7 @@ public class GUI {
     private Color darkFrameColor, darkPaneColor, darkContainerColor;
     private Color lightFrameColor, lightPaneColor, lightContainerColor;
     private Color borderColor;
+    private Color transparentColor;
 
     public GUI(){
         this.x_dimension = 600;
@@ -58,16 +60,17 @@ public class GUI {
 
         this.borderColor = new Color(0xFFD700);
 
-        this.lightFrameColor = new Color(0x002366);
-        this.lightPaneColor = new Color(0xFAFAFA);
-        this.lightContainerColor = new Color(0xEDEDED);
-        // this.lightContainerColor = new Color(0x8FEDEDED, true);
+        this.lightFrameColor = new Color(0xaf002366, true);
+        this.lightPaneColor = new Color(0xFFFAFAFA, true);
+        this.lightContainerColor = new Color(0xFFEDEDED, true);
 
         this.darkFrameColor = new Color(0x585A5C);
         this.darkPaneColor = new Color(0x707477);
         this.darkContainerColor = new Color(0x989DA0);
 
         this.activeColor = new Color(0x96CFFF);
+
+        this.transparentColor = new Color(0, 0, 0, 0);
     }
 
     public void init(){
@@ -133,11 +136,20 @@ public class GUI {
         contentPane.setLayout(new BorderLayout());
         contentPane.setBackground(this.frameColor);
 
-        JPanel coloredBorderPane = new JPanel();
+        JBPanel background = new JBPanel();
+
+        try {
+            background = new JBPanel("bc74860b1841a4dfe5aa9e3ea2571e36.jpg", this.x_dimension, this.y_dimension);
+            background.setLayout(new BorderLayout());
+        } catch (IOException e) {
+            System.out.print("Bad image load.");
+        }
+
+        JPanel coloredBorderPane = new TransparentPanel();
         coloredBorderPane.setLayout(new BoxLayout(coloredBorderPane, BoxLayout.PAGE_AXIS));
         coloredBorderPane.setBackground(contentPane.getBackground());
 
-        JPanel textPane = new JPanel();
+        JPanel textPane = new TransparentPanel();
         textPane.setLayout(new BoxLayout(textPane, BoxLayout.PAGE_AXIS));
         textPane.setBackground(this.paneColor);
 
@@ -230,9 +242,11 @@ public class GUI {
         coloredBorderPane.add(Box.createGlue());
         coloredBorderPane.add(textPane);
         coloredBorderPane.add(Box.createGlue());
-        coloredBorderPane.setBorder(BorderFactory.createEmptyBorder(90, 10, 90, 10));
+        coloredBorderPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        contentPane.add(coloredBorderPane, BorderLayout.CENTER);
+        background.add(coloredBorderPane, BorderLayout.CENTER);
+
+        contentPane.add(background, BorderLayout.CENTER);
         loginFrame.pack();
         loginFrame.setVisible(true);
     }
@@ -281,7 +295,16 @@ public class GUI {
         Container contentPane = portalFrame.getContentPane();
         contentPane.setBackground(this.frameColor);
 
-        JPanel coloredBorderPane = new JPanel();
+        JBPanel background = new JBPanel();
+
+        try {
+            background = new JBPanel("bc74860b1841a4dfe5aa9e3ea2571e36.jpg", this.x_dimension, this.y_dimension);
+            background.setLayout(new BorderLayout());
+        } catch (IOException e) {
+            System.out.print("Bad image load.");
+        }
+
+        JPanel coloredBorderPane = new TransparentPanel();
         coloredBorderPane.setLayout(new BoxLayout(coloredBorderPane, BoxLayout.PAGE_AXIS));
         coloredBorderPane.setBackground(contentPane.getBackground());
 
@@ -493,7 +516,7 @@ public class GUI {
         welcome.setMaximumSize(new Dimension((preferedSize/2) - 15, buttonHeight-10));
 
         JPanel containerColorRigidHorizontal = new JPanel();
-        containerColorRigidHorizontal.setBackground(containerPane.getBackground());
+        containerColorRigidHorizontal.setBackground(this.transparentColor);
         containerColorRigidHorizontal.add(Box.createRigidArea(new Dimension((preferedSize/2)-10, 0)));
 
         welcome.add(welcomeLabel, BorderLayout.CENTER);
@@ -527,7 +550,7 @@ public class GUI {
         view.setMaximumSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
 
         JPanel containerColorRigidVertical = new JPanel();
-        containerColorRigidVertical.setBackground(containerPane.getBackground());
+        containerColorRigidVertical.setBackground(this.transparentColor);
         containerColorRigidVertical.add(Box.createRigidArea(new Dimension(0, 5)));
 
         containerColorRigidVertical.setMinimumSize(new Dimension(0, 5));
@@ -535,7 +558,7 @@ public class GUI {
         containerColorRigidVertical.setMaximumSize(new Dimension(0, 5));
 
         JPanel containerColorGlue = new JPanel();
-        containerColorGlue.setBackground(this.containerColor);
+        containerColorGlue.setBackground(this.transparentColor);
         containerColorGlue.add(Box.createGlue());
 
         content.add(search);
@@ -547,9 +570,6 @@ public class GUI {
         content.setPreferredSize(new Dimension(preferedSize, (buttonHeight*6) - 10));
         content.setMaximumSize(new Dimension(preferedSize, (buttonHeight*6) - 10));
         content.setBorder(new RoundedBorder(10, this.containerColor, this.paneColor));
-
-
-
 
         centerPane.add(welcomeWrapper);
         centerPane.add(containerColorRigidVertical);
@@ -575,7 +595,9 @@ public class GUI {
         coloredBorderPane.add(Box.createGlue());
         coloredBorderPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        contentPane.add(coloredBorderPane);
+        background.add(coloredBorderPane);
+
+        contentPane.add(background);
 
         portalFrame.pack();
         portalFrame.setVisible(true);
