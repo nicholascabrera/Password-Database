@@ -45,6 +45,7 @@ public class GUI {
     private Color frameColor, paneColor, activeColor, containerColor;
     private Color darkFrameColor, darkPaneColor, darkContainerColor;
     private Color lightFrameColor, lightPaneColor, lightContainerColor;
+    private Color borderColor;
 
     public GUI(){
         this.x_dimension = 600;
@@ -55,7 +56,9 @@ public class GUI {
         this.userDatabase = new Database("-1", new Password("-1"));
         this.generatedDatabase = new Database();
 
-        this.lightFrameColor = new Color(0xE8F3FF);
+        this.borderColor = new Color(0xFFD700);
+
+        this.lightFrameColor = new Color(0x002366);
         this.lightPaneColor = new Color(0xFAFAFA);
         this.lightContainerColor = new Color(0xEDEDED);
         // this.lightContainerColor = new Color(0x8FEDEDED, true);
@@ -222,7 +225,7 @@ public class GUI {
         textPane.add(buttonPane);
         textPane.add(Box.createRigidArea(new Dimension(0,5)));     // adds an invisible space between the text fields
         textPane.add(Box.createGlue());                                         // adds extra space to account for window expansion
-        textPane.setBorder(new RoundedBorder(10, this.frameColor, this.paneColor));
+        textPane.setBorder(new RoundedBorder(10, this.frameColor, this.borderColor));
 
         coloredBorderPane.add(Box.createGlue());
         coloredBorderPane.add(textPane);
@@ -565,7 +568,7 @@ public class GUI {
         containerPane.add(Box.createRigidArea(new Dimension(5, 0)));
         containerPane.add(bubblePane);
         containerPane.add(Box.createGlue());
-        containerPane.setBorder(new RoundedBorder(10, this.frameColor, this.containerColor));
+        containerPane.setBorder(new RoundedBorder(10, this.frameColor, this.borderColor));
 
         coloredBorderPane.add(Box.createGlue());
         coloredBorderPane.add(containerPane);
