@@ -17,7 +17,10 @@ public class RoundedBorder implements Border {
 
     RoundedBorder(int radius, Color backgroundColor, Color foregroundColor) {
         this.radius = radius;
-        this.backgroundColor = backgroundColor;
+        String color = Integer.toHexString(backgroundColor.getRGB());
+        color = color.substring(2, color.length());
+        color = "ff" + color;
+        this.backgroundColor = new Color(Integer.parseUnsignedInt(color, 16), false);
         this.foregroundColor = foregroundColor;
     }
 
@@ -28,7 +31,7 @@ public class RoundedBorder implements Border {
 
     @Override
     public boolean isBorderOpaque() {
-        return false;
+        return true;
     }
 
     @Override
@@ -45,6 +48,6 @@ public class RoundedBorder implements Border {
         g.setClip(null);
 
         g.setColor(this.foregroundColor);
-        g.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
+        g.drawRoundRect(x, y, width, height, radius+3, radius+3);
     }
 }

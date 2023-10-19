@@ -58,7 +58,7 @@ public class GUI {
         this.userDatabase = new Database("-1", new Password("-1"));
         this.generatedDatabase = new Database();
 
-        this.borderColor = new Color(0xFFD700);
+        this.borderColor = new Color(0xCCAC00);
 
         this.lightFrameColor = new Color(0xaf002366, true);
         this.lightPaneColor = new Color(0xFFFAFAFA, true);
@@ -68,7 +68,7 @@ public class GUI {
         this.darkPaneColor = new Color(0x707477);
         this.darkContainerColor = new Color(0x989DA0);
 
-        this.activeColor = new Color(0x96CFFF);
+        this.activeColor = new Color(0x002366);
 
         this.transparentColor = new Color(0, 0, 0, 0);
     }
@@ -237,7 +237,7 @@ public class GUI {
         textPane.add(buttonPane);
         textPane.add(Box.createRigidArea(new Dimension(0,5)));     // adds an invisible space between the text fields
         textPane.add(Box.createGlue());                                         // adds extra space to account for window expansion
-        textPane.setBorder(new RoundedBorder(10, this.frameColor, this.borderColor));
+        textPane.setBorder(new RoundedBorder(10, contentPane.getBackground(), this.borderColor));
 
         coloredBorderPane.add(Box.createGlue());
         coloredBorderPane.add(textPane);
@@ -312,9 +312,9 @@ public class GUI {
         containerPane.setLayout(new BoxLayout(containerPane, BoxLayout.LINE_AXIS));
         containerPane.setBackground(this.containerColor);
 
-        containerPane.setMinimumSize(new Dimension(x_dimension-40, y_dimension-80));
-        containerPane.setPreferredSize(new Dimension(x_dimension-40, y_dimension-80));
-        containerPane.setMaximumSize(new Dimension(x_dimension-40, y_dimension-80));
+        containerPane.setMinimumSize(new Dimension(x_dimension-100, y_dimension-80));
+        containerPane.setPreferredSize(new Dimension(x_dimension-100, y_dimension-80));
+        containerPane.setMaximumSize(new Dimension(x_dimension-100, y_dimension-80));
 
         JPanel menuPane = new JPanel();
         menuPane.setLayout(new BoxLayout(menuPane, BoxLayout.PAGE_AXIS));
@@ -322,7 +322,7 @@ public class GUI {
 
         JPanel centerPane = new JPanel();
         centerPane.setLayout(new BoxLayout(centerPane, BoxLayout.PAGE_AXIS));
-        centerPane.setBackground(this.containerColor);
+        centerPane.setBackground(this.transparentColor);
 
         JPanel bubblePane = new JPanel();
         bubblePane.setLayout(new BoxLayout(bubblePane, BoxLayout.PAGE_AXIS));
@@ -349,8 +349,13 @@ public class GUI {
                 ButtonModel model = (ButtonModel) e.getSource();
                 if (model.isRollover()) {
                     accountButton.setBackground(activeColor);
+                    accountButton.setForeground(paneColor);
+                    accountButton.setBorderPainted(true);
+                    accountButton.setBorder(BorderFactory.createLineBorder(borderColor, 2));
                 } else {
+                    accountButton.setBorderPainted(false);
                     accountButton.setBackground(paneColor);
+                    accountButton.setForeground(Color.BLACK);
                 }
             }
         });
@@ -371,8 +376,13 @@ public class GUI {
                 ButtonModel model = (ButtonModel) e.getSource();
                 if (model.isRollover()) {
                     settingsButton.setBackground(activeColor);
+                    settingsButton.setForeground(paneColor);
+                    settingsButton.setBorderPainted(true);
+                    settingsButton.setBorder(BorderFactory.createLineBorder(borderColor, 2));
                 } else {
+                    settingsButton.setBorderPainted(false);
                     settingsButton.setBackground(paneColor);
+                    settingsButton.setForeground(Color.BLACK);
                 }
             }
         });
@@ -393,8 +403,13 @@ public class GUI {
                 ButtonModel model = (ButtonModel) e.getSource();
                 if (model.isRollover()) {
                     statisticsButton.setBackground(activeColor);
+                    statisticsButton.setForeground(paneColor);
+                    statisticsButton.setBorderPainted(true);
+                    statisticsButton.setBorder(BorderFactory.createLineBorder(borderColor, 2));
                 } else {
+                    statisticsButton.setBorderPainted(false);
                     statisticsButton.setBackground(paneColor);
+                    statisticsButton.setForeground(Color.BLACK);
                 }
             }
         });
@@ -417,8 +432,13 @@ public class GUI {
                 ButtonModel model = (ButtonModel) e.getSource();
                 if (model.isRollover()) {
                     generateButton.setBackground(activeColor);
+                    generateButton.setForeground(paneColor);
+                    generateButton.setBorderPainted(true);
+                    generateButton.setBorder(BorderFactory.createLineBorder(borderColor, 2));
                 } else {
+                    generateButton.setBorderPainted(false);
                     generateButton.setBackground(paneColor);
+                    generateButton.setForeground(Color.BLACK);
                 }
             }
         });
@@ -443,8 +463,13 @@ public class GUI {
                 ButtonModel model = (ButtonModel) e.getSource();
                 if (model.isRollover()) {
                     signoutButton.setBackground(activeColor);
+                    signoutButton.setForeground(paneColor);
+                    signoutButton.setBorderPainted(true);
+                    signoutButton.setBorder(BorderFactory.createLineBorder(borderColor, 2));
                 } else {
+                    signoutButton.setBorderPainted(false);
                     signoutButton.setBackground(paneColor);
+                    signoutButton.setForeground(Color.BLACK);
                 }
             }
         });
@@ -468,8 +493,13 @@ public class GUI {
                 ButtonModel model = (ButtonModel) e.getSource();
                 if (model.isRollover()) {
                     aboutButton.setBackground(activeColor);
+                    aboutButton.setForeground(paneColor);
+                    aboutButton.setBorderPainted(true);
+                    aboutButton.setBorder(BorderFactory.createLineBorder(borderColor, 2));
                 } else {
+                    aboutButton.setBorderPainted(false);
                     aboutButton.setBackground(paneColor);
+                    aboutButton.setForeground(Color.BLACK);
                 }
             }
         });
@@ -485,7 +515,7 @@ public class GUI {
         menuPane.add(settingsButton);
         menuPane.add(statisticsButton);
         menuPane.add(generateButton);
-        menuPane.add(Box.createRigidArea(new Dimension(0, buttonHeight)));
+        menuPane.add(Box.createRigidArea(new Dimension(0, buttonHeight-4)));
         menuPane.add(signoutButton);
         menuPane.add(aboutButton);
 
@@ -498,7 +528,7 @@ public class GUI {
 
         JPanel welcomeWrapper = new JPanel();
         welcomeWrapper.setLayout(new BoxLayout(welcomeWrapper, BoxLayout.LINE_AXIS));
-        welcomeWrapper.setBackground(this.containerColor);
+        welcomeWrapper.setBackground(this.transparentColor);
 
         welcomeWrapper.setMinimumSize(new Dimension(preferedSize, buttonHeight));
         welcomeWrapper.setPreferredSize(new Dimension(preferedSize, buttonHeight));
@@ -520,7 +550,7 @@ public class GUI {
         containerColorRigidHorizontal.add(Box.createRigidArea(new Dimension((preferedSize/2)-10, 0)));
 
         welcome.add(welcomeLabel, BorderLayout.CENTER);
-        welcome.setBorder(new RoundedBorder(5, this.containerColor, this.paneColor));
+        welcome.setBorder(new RoundedBorder(5, this.containerColor, this.borderColor));
 
         welcomeWrapper.add(welcome);
         welcomeWrapper.add(containerColorRigidHorizontal);
@@ -569,7 +599,7 @@ public class GUI {
         content.setMinimumSize(new Dimension(preferedSize, (buttonHeight*6) - 10));
         content.setPreferredSize(new Dimension(preferedSize, (buttonHeight*6) - 10));
         content.setMaximumSize(new Dimension(preferedSize, (buttonHeight*6) - 10));
-        content.setBorder(new RoundedBorder(10, this.containerColor, this.paneColor));
+        content.setBorder(new RoundedBorder(10, this.containerColor, this.borderColor));
 
         centerPane.add(welcomeWrapper);
         centerPane.add(containerColorRigidVertical);
