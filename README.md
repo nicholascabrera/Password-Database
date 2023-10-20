@@ -46,3 +46,8 @@ GRANT INSERT ON pass_db.app_pass TO 'writer_passDB'@'localhost';
 These commands are not housed in a file for user reassurance.
 
 After running those commands and assuming you use VS Code, you are now ready to use this program.
+
+## What's Next?
+Despite all my efforts, there are still major security flaws with the program. One massive issue is the fact that the MySQL users themselves store their login information in plain text in the program. Unfortunately, this isn't possible to rectify this without creating an external web service which holds the passwords, and only the usernames are stored. This way, decompiling the code would not directly compromise the entire project. This is currently beyond the scope of this project, but could be worth looking into for a future project. This could also mean migrating the MySQL server from command prompt to somewhere online, most likely SQLite if that is the case.
+
+Ultimately, designing a webservice for this program requires more knowledge than I currently possess. Thankfully, I'll be working on rectifying that situation in the future.
