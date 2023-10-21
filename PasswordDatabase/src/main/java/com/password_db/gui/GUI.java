@@ -105,6 +105,8 @@ public class GUI {
                 this.loginInstance();
                 break;
             case "portal":
+                this.generatedDatabase.setPassword(userDatabase.getPassword());
+                this.generatedDatabase.setUsername(userDatabase.getUsername());
                 this.instance = "portal";
                 this.portalInstance();
                 break;
@@ -173,8 +175,6 @@ public class GUI {
         JButton loginButton = new JButton("Log In");
 
         loginHandler = new LogInEventHandler(this, this.userDatabase, loginFrame, username, password);
-        this.generatedDatabase.setPassword(userDatabase.getPassword());
-        this.generatedDatabase.setUsername(userDatabase.getUsername());
 
         username.setMinimumSize(new Dimension(preferedSize, 20));
         password.setMinimumSize(new Dimension(preferedSize, 20));
@@ -571,8 +571,10 @@ public class GUI {
         passwords.setEditable(false);
         passwords.setLineWrap(true);
         passwords.setFont(new Font("Arial", Font.PLAIN, 10));
-
+        
         passwords.setText("this is where usernames, websites, and passwords will be stored.");
+
+        generatedDatabase.pullAllPasswords(); 
 
         JScrollPane view = new JScrollPane(passwords);
         view.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);

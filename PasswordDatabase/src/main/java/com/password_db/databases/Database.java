@@ -212,11 +212,86 @@ public class Database {
       return false;
    }
 
-   public void pullPassword(){
+   public ResultSet pullKey(String ID) throws SQLException{
+      Connection conn = DriverManager.getConnection(
+         "jdbc:mysql://localhost:3306/generated_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
+         "reader_senes", "#js7qBD5#Y8xG"); // this is the database reader. It has a limited view (e_keys)
+         // and read-only access.
+
+      String query = "SELECT e_key, salt FROM generated_db.e_keys WHERE ID = ?";
+      PreparedStatement paramQuery = conn.prepareStatement(query);
+      paramQuery.setString(1, ID);
+
+      ResultSet keysAndSalts = paramQuery.executeQuery();
+      return keysAndSalts;
+   }
+
+   public void pullAllPasswords(){
       // in order to pull the passwords, the reader will read the recorded username and website from website_users
       // concatenate them with the master username and master password the user provides, then checks to see if it matches the 
       // ID recorded in the table. Then and only then, will they reader pull from e_passwords and e_keys.
-      // "reader_senes: #js7qBD5#Y8xG"
-      // "reader_uspa: d7*jNc5dZz9z@"
+      String ID = "", website = "", pulledUser = "", pulledPassword = "", salt = "", key = "";
+      byte[] hashSalt = Base64.getDecoder().decode("ABCDEFGHIJKLMNOP");
+      SecureObject s = new SecureObject();
+      s.init();
+
+      try (
+         Connection conn = DriverManager.getConnection(
+            "jdbc:mysql://localhost:3306/generated_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
+            "reader_uspa", "d7*jNc5dZz9z@") // this is the database reader. It has a limited view (website_users
+            // and e_passwords) and read-only access.
+      ) {
+         
+         // first, we have to pull all the records from our databases.
+         // pull from website_users
+         String query = "SELECT * FROM generated_db.website_users"; // read all
+         PreparedStatement prepped = conn.prepareStatement(query); // use parameterized queries to prevent SQL injection.
+         ResultSet website_usersResultSet = prepped.executeQuery(); // execute the read
+
+         System.out.println("Read from usernames and websites.");
+
+         // pull from e_passwords
+         query = "SELECT * FROM generated_db.e_passwords;"; // read all
+         prepped = conn.prepareStatement(query);
+         ResultSet e_passwordsResultSet = prepped.executeQuery(); // execute insertion
+         
+         System.out.println("Read from passwords.");
+
+         while(website_usersResultSet.next() && e_passwordsResultSet.next()){
+            ID = website_usersResultSet.getString("ID");
+            website = website_usersResultSet.getString("website");
+            pulledUser = website_usersResultSet.getString("username");
+
+            System.out.println("ID: " + ID);
+
+            System.out.println("Pulled Username: " + pulledUser);
+            System.out.println("Website: " + website);
+            System.out.println("Master Username: " + this.getUsername());
+            System.out.println("Master Password: " + this.getPassword().getPassword());
+
+            String identifier = ((pulledUser.concat(website)).concat(this.getUsername())).concat(this.getPassword().getPassword());
+            identifier = s.argonHash(identifier, hashSalt);
+
+            System.out.println("Identifier: " + identifier);
+
+            if(identifier.equals(ID)){     // the ID is correct, and the stored password belongs to us.
+               System.out.println("Generated Password ID: " + ID);
+               pulledPassword = e_passwordsResultSet.getString("password");   // pull the password
+               System.out.println("Encrypted Password: " + pulledPassword);
+               ResultSet keyResultSet = pullKey(ID);     // pull the key and salt at that ID
+               if(keyResultSet.next()){
+                  key = keyResultSet.getString("e_key");
+                  salt = keyResultSet.getString("salt");
+                  System.out.println("Encrypted Key: " + key);
+                  System.out.println("Salt: " + salt);
+               } else {
+                  System.out.println("Couldn't pull the key.");
+               }
+            }
+         }
+
+      } catch (SQLException e) {
+         e.printStackTrace();
+      }
    }
 }
