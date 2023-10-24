@@ -62,6 +62,7 @@ public class Password {
         if (username.equals("")){
             return;
         }
+
         String website = this.getWebsite();
         if(website.equals("")){
             return;
@@ -80,21 +81,30 @@ public class Password {
             SecureObject s = new SecureObject();
             s.init();
             byte[] salt = SecureObject.generateSalt(128);
+            System.out.println("Password Salt: " + Base64.getEncoder().encodeToString(salt));
 
             // encrypt the password. It is ready to store.
             byte[] encryptedPassword = s.encrypt(password123);
+            System.out.println("Encrypted Generated Password: " + Base64.getEncoder().encodeToString(encryptedPassword));
+
 
             // prepare to encrypt the key.
             Password masterPassword = database.getPassword();
+            System.out.println("Master Password: " + masterPassword.getPassword());
             String key = s.getKey();
+            System.out.println("Password Key: " + key);
 
             // encrypt the key. It is ready to store.
             byte[] encryptedKey = s.encrypt(Base64.getDecoder().decode(key), masterPassword);
+            System.out.println("Encrypted Password Key: " + Base64.getEncoder().encodeToString(encryptedKey));
 
             // concatenate the website username, website, and master username, then hash it to use as the ID.
             String identifier = ((username.concat(website)).concat(database.getUsername())).concat(masterPassword.getPassword());
+            System.out.println(identifier);
             byte[] hashSalt = Base64.getDecoder().decode("ABCDEFGHIJKLMNOP");
+            System.out.println(hashSalt);
             String id = s.argonHash(identifier, hashSalt);     // ID has been created. It is ready to store.
+            System.out.println(id);
 
             // perform storing operations.
             if(database.storeGeneratedPassword(id, website, username, 
