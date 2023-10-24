@@ -376,9 +376,9 @@ public class DBTablePrinter {
                 return;
             }
 
-            String sqlSelectAll = "SELECT * FROM " + tableName + " LIMIT " + maxRows;
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(sqlSelectAll);
+            String sqlSelectAll = "SELECT * FROM ? LIMIT ?";
+            PreparedStatement parameterizedQuery = conn.prepareStatement(sqlSelectAll);
+            rs = parameterizedQuery.executeQuery(sqlSelectAll);
 
             printResultSet(rs, maxStringColWidth);
 
