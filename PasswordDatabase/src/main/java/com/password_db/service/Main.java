@@ -1,6 +1,7 @@
 package com.password_db.service;
 
 import com.password_db.cryptography.Password;
+import com.password_db.cryptography.SecureObject;
 import com.password_db.gui.GUI;
 
 public class Main {
@@ -69,8 +70,8 @@ public class Main {
 
 
 
-        // SecureObject s = new SecureObject();
-        // s.init();
+        SecureObject s = new SecureObject();
+        s.init();
 
         // Password gPassword = new Password("password123456");
         

@@ -226,7 +226,7 @@ public class Database {
       return keysAndSalts;
    }
 
-   public void pullAllPasswords(){
+   public void pullAllPasswords() throws Exception{
       // in order to pull the passwords, the reader will read the recorded username and website from website_users
       // concatenate them with the master username and master password the user provides, then checks to see if it matches the 
       // ID recorded in the table. Then and only then, will they reader pull from e_passwords and e_keys.
@@ -262,17 +262,8 @@ public class Database {
             website = website_usersResultSet.getString("website");
             pulledUser = website_usersResultSet.getString("username");
 
-            System.out.println("ID: " + ID);
-
-            System.out.println("Pulled Username: " + pulledUser);
-            System.out.println("Website: " + website);
-            System.out.println("Master Username: " + this.getUsername());
-            System.out.println("Master Password: " + this.getPassword().getPassword());
-
             String identifier = ((pulledUser.concat(website)).concat(this.getUsername())).concat(this.getPassword().getPassword());
             identifier = s.argonHash(identifier, hashSalt);
-
-            System.out.println("Identifier: " + identifier);
 
             if(identifier.equals(ID)){     // the ID is correct, and the stored password belongs to us.
                System.out.println("Generated Password ID: " + ID);
@@ -284,6 +275,12 @@ public class Database {
                   salt = keyResultSet.getString("salt");
                   System.out.println("Encrypted Key: " + key);
                   System.out.println("Salt: " + salt);
+
+                  String decryptedKey = s.decrypt(Base64.getDecoder().decode(key), this.getPassword());
+                  System.out.println("Decrypted Key: " + decryptedKey);
+
+                  String decryptedString = s.decrypt(Base64.getDecoder().decode(pulledPassword), Base64.getDecoder().decode(decryptedKey), Base64.getDecoder().decode(salt));
+                  System.out.println("Decrypted Password: " + decryptedString);
                } else {
                   System.out.println("Couldn't pull the key.");
                }

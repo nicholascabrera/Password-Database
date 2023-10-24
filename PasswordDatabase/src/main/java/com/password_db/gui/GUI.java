@@ -574,7 +574,11 @@ public class GUI {
         
         passwords.setText("this is where usernames, websites, and passwords will be stored.");
 
-        generatedDatabase.pullAllPasswords(); 
+        try{
+            generatedDatabase.pullAllPasswords(); 
+        } catch (Exception e){
+            e.printStackTrace();
+        }
 
         JScrollPane view = new JScrollPane(passwords);
         view.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);

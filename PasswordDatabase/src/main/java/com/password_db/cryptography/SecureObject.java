@@ -31,7 +31,6 @@ public class SecureObject extends Password {
     public byte[] encrypt(String plaintext){
         try {
             this.cyph = Cipher.getInstance("AES/CBC/PKCS5PADDING");
-            System.out.println("Salt: " + Base64.getEncoder().encodeToString(this.IV.getIV()));
             this.cyph.init(Cipher.ENCRYPT_MODE, this.key, this.IV);
         } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | NoSuchPaddingException e) {
             e.printStackTrace();
@@ -146,7 +145,6 @@ public class SecureObject extends Password {
         
         byte[] kBytes = this.getKey().getBytes(StandardCharsets.UTF_8);
         byte[] encryptedByted = encrypt.doFinal(kBytes);
-        System.out.println(Base64.getEncoder().encodeToString(encryptedByted));
         return encryptedByted;
     }
 
@@ -163,7 +161,6 @@ public class SecureObject extends Password {
         encrypt.init(Cipher.ENCRYPT_MODE, k, intervalVector);
         
         byte[] encryptedByted = encrypt.doFinal(plainKey);
-        System.out.println(Base64.getEncoder().encodeToString(encryptedByted));
         return encryptedByted;
     }
 
@@ -180,7 +177,6 @@ public class SecureObject extends Password {
         decrypt.init(Cipher.DECRYPT_MODE, k, intervalVector);
 
         byte[] decryptedBytes = decrypt.doFinal(input);
-        System.out.println(Base64.getEncoder().encodeToString(decryptedBytes));
         return Base64.getEncoder().encodeToString(decryptedBytes);
     }
 

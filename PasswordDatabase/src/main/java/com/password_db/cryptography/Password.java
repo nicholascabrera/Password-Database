@@ -80,11 +80,11 @@ public class Password {
             // prepare to encrypt the password.
             SecureObject s = new SecureObject();
             s.init();
-            byte[] salt = SecureObject.generateSalt(128);
+            byte[] salt = SecureObject.generateSalt(16);    // 16 bytes, or 128 bits. This is more than enough to avoid collision.
             System.out.println("Password Salt: " + Base64.getEncoder().encodeToString(salt));
 
             // encrypt the password. It is ready to store.
-            byte[] encryptedPassword = s.encrypt(password123);
+            byte[] encryptedPassword = s.encrypt(password123, salt);
             System.out.println("Encrypted Generated Password: " + Base64.getEncoder().encodeToString(encryptedPassword));
 
 
