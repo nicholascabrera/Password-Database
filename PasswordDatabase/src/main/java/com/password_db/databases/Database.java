@@ -266,21 +266,19 @@ public class Database {
             identifier = s.argonHash(identifier, hashSalt);
 
             if(identifier.equals(ID)){     // the ID is correct, and the stored password belongs to us.
-               System.out.println("Generated Password ID: " + ID);
                pulledPassword = e_passwordsResultSet.getString("password");   // pull the password
-               System.out.println("Encrypted Password: " + pulledPassword);
                ResultSet keyResultSet = pullKey(ID);     // pull the key and salt at that ID
                if(keyResultSet.next()){
                   key = keyResultSet.getString("e_key");
                   salt = keyResultSet.getString("salt");
-                  System.out.println("Encrypted Key: " + key);
-                  System.out.println("Salt: " + salt);
 
                   String decryptedKey = s.decrypt(Base64.getDecoder().decode(key), this.getPassword());
-                  System.out.println("Decrypted Key: " + decryptedKey);
 
                   String decryptedString = s.decrypt(Base64.getDecoder().decode(pulledPassword), Base64.getDecoder().decode(decryptedKey), Base64.getDecoder().decode(salt));
-                  System.out.println("Decrypted Password: " + decryptedString);
+                  
+                  System.out.println("Website: " + website);
+                  System.out.println("Username: " + pulledUser);
+                  System.out.println("Password: " + decryptedString);
                } else {
                   System.out.println("Couldn't pull the key.");
                }
