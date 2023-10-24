@@ -11,6 +11,9 @@ import javax.swing.JOptionPane;
 
 import com.password_db.cryptography.Password;
 import com.password_db.cryptography.SecureObject;
+
+import com.password_db.gui.Record;
+
 import com.password_db.exceptions.IncorrectPasswordException;
 import com.password_db.exceptions.IncorrectUsernameException;
 import com.password_db.exceptions.NoPasswordException;
@@ -226,7 +229,7 @@ public class Database {
       return keysAndSalts;
    }
 
-   public void pullAllPasswords() throws Exception{
+   public Record[] pullAllPasswords() throws Exception{
       // in order to pull the passwords, the reader will read the recorded username and website from website_users
       // concatenate them with the master username and master password the user provides, then checks to see if it matches the 
       // ID recorded in the table. Then and only then, will they reader pull from e_passwords and e_keys.
@@ -234,6 +237,8 @@ public class Database {
       byte[] hashSalt = Base64.getDecoder().decode("ABCDEFGHIJKLMNOP");
       SecureObject s = new SecureObject();
       s.init();
+
+      Record records[] = new Record[0];
 
       try (
          Connection conn = DriverManager.getConnection(
@@ -276,6 +281,7 @@ public class Database {
 
                   String decryptedString = s.decrypt(Base64.getDecoder().decode(pulledPassword), Base64.getDecoder().decode(decryptedKey), Base64.getDecoder().decode(salt));
                   
+                  records = Record.append(records, new Record(website, username, decryptedString));
                   System.out.println("Website: " + website);
                   System.out.println("Username: " + pulledUser);
                   System.out.println("Password: " + decryptedString);
@@ -288,5 +294,7 @@ public class Database {
       } catch (SQLException e) {
          e.printStackTrace();
       }
+
+      return records;
    }
 }

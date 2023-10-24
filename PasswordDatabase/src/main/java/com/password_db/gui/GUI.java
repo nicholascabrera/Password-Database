@@ -108,7 +108,13 @@ public class GUI {
                 this.generatedDatabase.setPassword(userDatabase.getPassword());
                 this.generatedDatabase.setUsername(userDatabase.getUsername());
                 this.instance = "portal";
-                this.portalInstance();
+                
+                try {
+                    this.portalInstance();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
                 break;
         }
     }
@@ -280,8 +286,9 @@ public class GUI {
      *  - search and generate take input from website to use as their ID.
      *  - print disregards website input.
      *  - additional button to go back to main.
+     * @throws Exception
      */
-    private void portalInstance(){
+    private void portalInstance() throws Exception{
         try { 
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
@@ -569,16 +576,20 @@ public class GUI {
 
         JTextArea passwords = new JTextArea(5, preferedSize);
         passwords.setEditable(false);
-        passwords.setLineWrap(true);
         passwords.setFont(new Font("Arial", Font.PLAIN, 10));
-        
-        passwords.setText("this is where usernames, websites, and passwords will be stored.");
 
-        try{
-            generatedDatabase.pullAllPasswords(); 
-        } catch (Exception e){
-            e.printStackTrace();
+        String passwordArea = "+--------------------+-----------------------+----------------------------------------------------+\n" + 
+                              " |       Website      |      Username       |                         Password                         |\n" + 
+                              "+--------------------+-----------------------+----------------------------------------------------+\n";
+
+        
+        Record records[] = generatedDatabase.pullAllPasswords();
+
+        for(Record record: records){
+            passwordArea = passwordArea.concat(record.formatRecord());
         }
+
+        passwords.setText(passwordArea);
 
         JScrollPane view = new JScrollPane(passwords);
         view.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
