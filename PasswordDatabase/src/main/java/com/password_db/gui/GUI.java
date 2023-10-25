@@ -485,39 +485,42 @@ public class GUI {
 
         signoutButton.setActionCommand("logout");;
 
+        final JButton exitButton = new JButton("Exit");
+        exitButton.setMinimumSize(new Dimension(buttonWidth, buttonHeight));
+        exitButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
+        exitButton.setMaximumSize(new Dimension(buttonWidth, buttonHeight));
 
-        final JButton aboutButton = new JButton("About");
-        aboutButton.setMinimumSize(new Dimension(buttonWidth, buttonHeight));
-        aboutButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
-        aboutButton.setMaximumSize(new Dimension(buttonWidth, buttonHeight));
-
-        aboutButton.setBackground(paneColor);
-        aboutButton.setContentAreaFilled(false);
-        aboutButton.setBorderPainted(false);
-        aboutButton.setFocusPainted(false);
-        aboutButton.setOpaque(true);
-        aboutButton.getModel().addChangeListener(new ChangeListener() {
+        exitButton.setBackground(paneColor);
+        exitButton.setContentAreaFilled(false);
+        exitButton.setBorderPainted(false);
+        exitButton.setFocusPainted(false);
+        exitButton.setOpaque(true);
+        exitButton.getModel().addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 ButtonModel model = (ButtonModel) e.getSource();
                 if (model.isRollover()) {
-                    aboutButton.setBackground(activeColor);
-                    aboutButton.setForeground(paneColor);
-                    aboutButton.setBorderPainted(true);
-                    aboutButton.setBorder(BorderFactory.createLineBorder(borderColor, 2));
+                    exitButton.setBackground(activeColor);
+                    exitButton.setForeground(paneColor);
+                    exitButton.setBorderPainted(true);
+                    exitButton.setBorder(BorderFactory.createLineBorder(borderColor, 2));
                 } else {
-                    aboutButton.setBorderPainted(false);
-                    aboutButton.setBackground(paneColor);
-                    aboutButton.setForeground(Color.BLACK);
+                    exitButton.setBorderPainted(false);
+                    exitButton.setBackground(paneColor);
+                    exitButton.setForeground(Color.BLACK);
                 }
             }
         });
+
+        exitButton.setActionCommand("exit");
 
         this.portalHandler = new PortalEventHandler(this, portalFrame, this.generatedDatabase);
         
         portalFrame.addKeyListener(this.portalHandler);
         signoutButton.addActionListener(this.portalHandler);
         generateButton.addActionListener(this.portalHandler);
+        exitButton.addActionListener(this.portalHandler);
+        portalFrame.addKeyListener(this.portalHandler);
 
 
         menuPane.add(accountButton);
@@ -526,7 +529,7 @@ public class GUI {
         menuPane.add(generateButton);
         menuPane.add(Box.createRigidArea(new Dimension(0, buttonHeight-4)));
         menuPane.add(signoutButton);
-        menuPane.add(aboutButton);
+        menuPane.add(exitButton);
 
         menuPane.setMinimumSize(new Dimension(buttonWidth, buttonHeight*7));
         menuPane.setPreferredSize(new Dimension(buttonWidth, buttonHeight*7));
@@ -559,7 +562,7 @@ public class GUI {
         containerColorRigidHorizontal.add(Box.createRigidArea(new Dimension((preferedSize/2)-10, 0)));
 
         welcome.add(welcomeLabel, BorderLayout.CENTER);
-        welcome.setBorder(new RoundedBorder(5, this.containerColor, this.borderColor));
+        welcome.setBorder(new RoundedBorder(5, this.containerColor, this.frameColor));
 
         welcomeWrapper.add(welcome);
         welcomeWrapper.add(containerColorRigidHorizontal);
@@ -632,7 +635,7 @@ public class GUI {
         content.setMinimumSize(new Dimension(preferedSize, (buttonHeight*6) - 10));
         content.setPreferredSize(new Dimension(preferedSize, (buttonHeight*6) - 10));
         content.setMaximumSize(new Dimension(preferedSize, (buttonHeight*6) - 10));
-        content.setBorder(new RoundedBorder(10, this.containerColor, this.borderColor));
+        content.setBorder(new RoundedBorder(10, this.containerColor, this.frameColor));
 
         centerPane.add(welcomeWrapper);
         centerPane.add(containerColorRigidVertical);

@@ -1,6 +1,5 @@
 package com.password_db.handlers;
 
-// import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -16,14 +15,7 @@ public class PortalEventHandler implements ActionListener, KeyListener  {
 
     private JFrame portalFrame;
     private Database generated_db;
-
-    //light v dark mode
-    private boolean colorMode;
     private GUI window;
-    // private Color paneColor = new Color(0xFAFAFA);
-    // private Color darkPaneColor = new Color(0xFAFAFA);
-    // private Color frameColor = new Color(0xE8F3FF);
-    // private Color darkFrameColor = new Color(0xE8F3FF);
 
     
 
@@ -31,19 +23,11 @@ public class PortalEventHandler implements ActionListener, KeyListener  {
         this.portalFrame = portalFrame;
         this.window = window;
         this.generated_db = generated_db;
-        this.colorMode = true;   //true is light, false is dark
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand() == "switch"){
-            this.colorMode = !this.colorMode;
-            if(colorMode){
-                // set everything to the light mode colors
-            } else {
-                // set everything to the dark mode colors
-            }
-        } else if (e.getActionCommand() == "logout"){
+        if (e.getActionCommand() == "logout"){
             this.window.setUsername("");
             this.window.setPassword(new Password());
             this.window.setInstance("login");
@@ -55,7 +39,11 @@ public class PortalEventHandler implements ActionListener, KeyListener  {
             } catch (Exception err){
                 err.printStackTrace();
             }
-
+        } else if(e.getActionCommand() == "exit"){
+            this.window.setUsername("");
+            this.window.setPassword(new Password());
+            this.portalFrame.dispose();
+            System.exit(0);
         }
     }
 
