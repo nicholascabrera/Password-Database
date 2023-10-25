@@ -1,19 +1,16 @@
 package com.password_db.gui;
 
 public class Record {
-    private String website, username, password;
+    private String record[];
 
     public Record(){}
 
     public Record(String website, String username, String password){
-        this.website = website;
-        this.username = username;
-        this.password = password;
-        this.formatRecord();
+        this.record = new String[]{website, username, password};
     }
 
-    public String formatRecord(){
-        return String.format("|%20s|%20s|%40s|\n", this.website, this.username, this.password);
+    public String[] getRecord(){
+        return record;
     }
 
     public static Record[] append(Record[] records, Record newRecord){

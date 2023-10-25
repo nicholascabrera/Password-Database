@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.io.IOException;
 
 import javax.swing.BorderFactory;
@@ -18,12 +17,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 import com.password_db.cryptography.Password;
 import com.password_db.databases.Database;
@@ -573,26 +573,40 @@ public class GUI {
         search.setMinimumSize(new Dimension(preferedSize, 20));
         search.setPreferredSize(new Dimension(preferedSize, 20));
         search.setMaximumSize(new Dimension(preferedSize, 20));
-
-        JTextArea passwords = new JTextArea(5, preferedSize);
-        passwords.setEditable(false);
-        passwords.setFont(new Font("Arial", Font.PLAIN, 10));
-
-        String passwordArea = "+--------------------+-----------------------+----------------------------------------------------+\n" + 
-                              " |       Website      |      Username       |                         Password                         |\n" + 
-                              "+--------------------+-----------------------+----------------------------------------------------+\n";
-
         
         Record records[] = generatedDatabase.pullAllPasswords();
+        
+        String recordsString[][] = new String[records.length][3];
 
-        for(Record record: records){
-            passwordArea = passwordArea.concat(record.formatRecord());
+        for(int record = 0; record < records.length; record++){
+            for(int field = 0; field < 3; field ++){
+                recordsString[record][field] = records[record].getRecord()[field];
+            }
+
         }
 
-        passwords.setText(passwordArea);
+        String fieldNames[] = {"Website", "Username", "Password"};
 
-        JScrollPane view = new JScrollPane(passwords);
-        view.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        JTable passwordTable = new JTable(recordsString, fieldNames);
+        DefaultTableModel tableModel = new DefaultTableModel(recordsString, fieldNames) {
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                //all cells false
+                return false;
+            }
+        };
+        
+        passwordTable.setModel(tableModel);
+
+        TableColumn column = passwordTable.getColumnModel().getColumn(0);
+        column.setPreferredWidth(column.getWidth() - 90);
+
+        column = passwordTable.getColumnModel().getColumn(1);
+        column.setPreferredWidth(column.getWidth() - 90);
+
+        JScrollPane view = new JScrollPane(passwordTable);
+        passwordTable.setFillsViewportHeight(true);
 
         view.setMinimumSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
         view.setPreferredSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
