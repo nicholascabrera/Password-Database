@@ -396,34 +396,6 @@ public class GUI {
             }
         });
 
-        final JButton statisticsButton = new JButton("Statistics");
-        statisticsButton.setMinimumSize(new Dimension(buttonWidth, buttonHeight));
-        statisticsButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
-        statisticsButton.setMaximumSize(new Dimension(buttonWidth, buttonHeight));
-        
-        statisticsButton.setBackground(paneColor);
-        statisticsButton.setContentAreaFilled(false);
-        statisticsButton.setBorderPainted(false);
-        statisticsButton.setFocusPainted(false);
-        statisticsButton.setOpaque(true);
-        statisticsButton.getModel().addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                ButtonModel model = (ButtonModel) e.getSource();
-                if (model.isRollover()) {
-                    statisticsButton.setBackground(activeColor);
-                    statisticsButton.setForeground(paneColor);
-                    statisticsButton.setBorderPainted(true);
-                    statisticsButton.setBorder(BorderFactory.createLineBorder(borderColor, 2));
-                } else {
-                    statisticsButton.setBorderPainted(false);
-                    statisticsButton.setBackground(paneColor);
-                    statisticsButton.setForeground(Color.BLACK);
-                }
-            }
-        });
-
-
         final JButton generateButton = new JButton("Generate");
         generateButton.setMinimumSize(new Dimension(buttonWidth, buttonHeight));
         generateButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
@@ -525,9 +497,8 @@ public class GUI {
 
         menuPane.add(accountButton);
         menuPane.add(settingsButton);
-        menuPane.add(statisticsButton);
         menuPane.add(generateButton);
-        menuPane.add(Box.createRigidArea(new Dimension(0, buttonHeight-4)));
+        menuPane.add(Box.createRigidArea(new Dimension(0, (2 * buttonHeight) - 4)));
         menuPane.add(signoutButton);
         menuPane.add(exitButton);
 
