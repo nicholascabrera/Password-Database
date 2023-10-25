@@ -1,7 +1,4 @@
 package com.password_db.service;
-
-import com.password_db.cryptography.Password;
-import com.password_db.cryptography.SecureObject;
 import com.password_db.gui.GUI;
 
 public class Main {
@@ -49,12 +46,12 @@ public class Main {
         } while (window.getInstance().equals("login"));
 
         // retrieve login information from the window
-        String username = window.getUsername();
-        Password masterPassword = window.getPassword();
+        //String username = window.getUsername();
+        //Password masterPassword = window.getPassword();
 
         // easy way to check that login information was received
-        System.out.printf("Username: %s\n", username);
-        System.out.printf("Password: %s\n", masterPassword.getPassword());
+        //System.out.printf("Username: %s\n", username);
+        //System.out.printf("Password: %s\n", masterPassword.getPassword());
 
         // check to see if the database contains the login information
         // if it does, go on to the next step (2)
@@ -70,8 +67,8 @@ public class Main {
 
 
 
-        SecureObject s = new SecureObject();
-        s.init();
+        //SecureObject s = new SecureObject();
+        //s.init();
 
         // Password gPassword = new Password("password123456");
         

@@ -585,7 +585,7 @@ public class GUI {
 
         }
 
-        String fieldNames[] = {"Website", "Username", "Password"};
+        String fieldNames[] = {"Application", "Username", "Password"};
 
         JTable passwordTable = new JTable(recordsString, fieldNames);
         DefaultTableModel tableModel = new DefaultTableModel(recordsString, fieldNames) {

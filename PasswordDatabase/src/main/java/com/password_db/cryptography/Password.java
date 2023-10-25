@@ -57,14 +57,13 @@ public class Password {
     }
 
     public void init(Database database) throws Exception{
-
-        String username = this.getUsername();
-        if (username.equals("")){
+        String website = this.getWebsite();
+        if(website.equals("")){
             return;
         }
 
-        String website = this.getWebsite();
-        if(website.equals("")){
+        String username = this.getUsername();
+        if (username.equals("")){
             return;
         }
         
@@ -122,7 +121,7 @@ public class Password {
     private String getWebsite() {
         String website = "\n";
         do{
-            String input = JOptionPane.showInputDialog(null, "What Website/Application is this for?");
+            String input = JOptionPane.showInputDialog(null, "What website or application is this for?");
             Pattern inputPattern = Pattern.compile("^[A-Za-z0-9]{0,20}$");
 
             if(input != null){
@@ -148,7 +147,7 @@ public class Password {
         String username = "\n";
 
         do{
-            String input = JOptionPane.showInputDialog(null, "Enter your username:");
+            String input = JOptionPane.showInputDialog(null, "Enter the username you used for the website or application:");
             Pattern inputPattern = Pattern.compile("^[A-Za-z0-9.]{3,20}$");
 
             if(input != null){

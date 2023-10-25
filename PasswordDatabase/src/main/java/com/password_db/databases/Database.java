@@ -128,7 +128,7 @@ public class Database {
       }
 
       if(usernameVerified && identifier != -1){
-         System.out.println("ID: " + identifier);
+         //System.out.println("ID: " + identifier);
 
          // second connection to the password database
          try(
@@ -253,14 +253,14 @@ public class Database {
          PreparedStatement prepped = conn.prepareStatement(query); // use parameterized queries to prevent SQL injection.
          ResultSet website_usersResultSet = prepped.executeQuery(); // execute the read
 
-         System.out.println("Read from usernames and websites.");
+         //System.out.println("Read from usernames and websites.");
 
          // pull from e_passwords
          query = "SELECT * FROM generated_db.e_passwords;"; // read all
          prepped = conn.prepareStatement(query);
          ResultSet e_passwordsResultSet = prepped.executeQuery(); // execute insertion
          
-         System.out.println("Read from passwords.");
+         //System.out.println("Read from passwords.");
 
          while(website_usersResultSet.next() && e_passwordsResultSet.next()){
             ID = website_usersResultSet.getString("ID");
@@ -281,20 +281,18 @@ public class Database {
 
                   String decryptedString = s.decrypt(Base64.getDecoder().decode(pulledPassword), Base64.getDecoder().decode(decryptedKey), Base64.getDecoder().decode(salt));
                   
-                  records = Record.append(records, new Record(website, username, decryptedString));
-                  System.out.println("Website: " + website);
-                  System.out.println("Username: " + pulledUser);
-                  System.out.println("Password: " + decryptedString);
+                  records = Record.append(records, new Record(website, pulledUser, decryptedString));
+                  //System.out.println("Website: " + website);
+                  //System.out.println("Username: " + pulledUser);
+                  //System.out.println("Password: " + decryptedString);
                } else {
                   System.out.println("Couldn't pull the key.");
                }
             }
          }
-
       } catch (SQLException e) {
          e.printStackTrace();
       }
-
       return records;
    }
 }
