@@ -180,7 +180,7 @@ public class GUI {
         JPasswordField password = new JPasswordField(preferedSize);
         JButton loginButton = new JButton("Log In");
 
-        loginHandler = new LogInEventHandler(this, this.userDatabase, loginFrame, username, password);
+        loginHandler = new LogInEventHandler(this, this.userDatabase, loginFrame, username, password, loginButton);
 
         username.setMinimumSize(new Dimension(preferedSize, 20));
         password.setMinimumSize(new Dimension(preferedSize, 20));
@@ -264,13 +264,15 @@ public class GUI {
      * 
      * The instance also contains a side bar with:
      * - Account (which shows account data, allows username and password change)
-     * - Settings (which allows the user to switch to dark mode)
-     * - Statistics (shows the average strength of your passwords)     
+     * - Settings (which allows the user to import or export a list of websites, 
+     *          usernames, and passwords, strength check all their passwords,
+     *          set minimum strengths, lengths and settings for all their passwords,
+     *          and set default password settings.)
      * - Generate (for generating a password)
      * 
      * 
-     * - Sign Out (move instance to login and dispose portal, reset username and master password.)
-     * - About (tells some information about me)
+     * - Sign Out (move instance to login and dispose portal, reset username and master password)
+     * - Exit (allows the user to exit the program completely)
      * 
      * The instance also displays all the passwords along with their usernames and websites in a scrollable pane.
      * 

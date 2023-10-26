@@ -171,6 +171,10 @@ public class Database {
       return credentialsVerified;
    }
 
+   public boolean addUser(String username, Password password){
+      return true;
+   }
+
    public boolean storeGeneratedPassword(String ID, String website, String username, String password, String salt, String key){
       try (
          Connection conn = DriverManager.getConnection(
