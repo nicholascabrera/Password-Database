@@ -1,5 +1,6 @@
 package com.password_db.databases;
 
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -21,6 +22,8 @@ import com.password_db.exceptions.NoPasswordException;
 public class Database {
    private String username;
    private Password masterPassword;
+
+   public static final int LOGIN_GOOD = 0, LOGIN_BAD = 1, REGISTER = 2;
 
    /**
     * In order to prevent SQL Injection, I will need several things:
@@ -63,39 +66,84 @@ public class Database {
       return this.masterPassword;
    }
 
-   public boolean addCredentials(int ID, Password masterPassword){
+   public boolean idExists(int ID){
       try (
          Connection conn = DriverManager.getConnection(
-            "jdbc:mysql://localhost:3306/pass_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
-               "writer_passDB", "56zj95!34u3$VB$t")
+            "jdbc:mysql://localhost:3306/user_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
+               "reader_userDB", "9XE6g^#^5VB")
       ){
-         SecureObject s = new SecureObject();
+         String query = "SELECT username FROM user_db.users WHERE ID = ?";
+         PreparedStatement parameterizedQuery = conn.prepareStatement(query);
+         parameterizedQuery.setInt(1, ID);
 
-         byte[] salt = SecureObject.generateSalt(128);
-         String passwordHash = s.argonHash(masterPassword, salt);
+         ResultSet rs = parameterizedQuery.executeQuery();
+         
+         return rs.next();
 
-         String query = "INSERT INTO pass_db.app_pass VALUES (?, ?, ?)";       // insert the id, hashed password, and its salt.
-
-         PreparedStatement prepped = conn.prepareStatement(query);      // use parameterized queries to prevent SQL injection.
-         prepped.setInt(1, ID);                                            // substitute the input ID for the 1st '?'
-         prepped.setString(2, passwordHash);                               // sub the hashed password 
-         prepped.setString(3, Base64.getEncoder().encodeToString(salt));   // sub the new created salt
-
-         int rowsAffected = prepped.executeUpdate();       // execute the SQL insertion
-
-         if(rowsAffected > 0){
-            return true;
-         }
-
-      } catch (SQLException exception){
-         exception.printStackTrace();
+      } catch(SQLException e){
+         e.printStackTrace();
       }
 
       return false;
    }
 
-   public boolean verifyCredentials(String username, Password masterPassword){
-      boolean credentialsVerified = false;
+   public boolean addCredentials(int ID, String username, Password masterPassword){
+      boolean usernameAdded = false;
+      boolean passwordAdded = false;
+
+      try (
+         Connection conn = DriverManager.getConnection(
+            "jdbc:mysql://localhost:3306/user_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
+               "writer_passDB", "56zj95!34u3$VB$t")
+      ){
+         String query = "INSERT INTO user_db.users VALUES (?, ?)";
+         PreparedStatement parameterizedQueries = conn.prepareStatement(query);
+         parameterizedQueries.setInt(1, ID);
+         parameterizedQueries.setString(2, username);
+
+         int rowsAffected = parameterizedQueries.executeUpdate();
+
+         if(rowsAffected > 0){
+            usernameAdded = true;
+         }
+      } catch(SQLException e){
+         e.printStackTrace();
+      }
+
+      if(usernameAdded){
+         try (
+            Connection conn = DriverManager.getConnection(
+               "jdbc:mysql://localhost:3306/pass_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
+                  "writer_passDB", "56zj95!34u3$VB$t")
+         ){
+            SecureObject s = new SecureObject();
+
+            byte[] salt = SecureObject.generateSalt(128);
+            String passwordHash = s.argonHash(masterPassword, salt);
+
+            String query = "INSERT INTO pass_db.app_pass VALUES (?, ?, ?)";       // insert the id, hashed password, and its salt.
+
+            PreparedStatement prepped = conn.prepareStatement(query);      // use parameterized queries to prevent SQL injection.
+            prepped.setInt(1, ID);                                            // substitute the input ID for the 1st '?'
+            prepped.setString(2, passwordHash);                               // sub the hashed password 
+            prepped.setString(3, Base64.getEncoder().encodeToString(salt));   // sub the new created salt
+
+            int rowsAffected = prepped.executeUpdate();       // execute the SQL insertion
+
+            if(rowsAffected > 0){
+               passwordAdded =  true;
+            }
+
+         } catch (SQLException exception){
+            exception.printStackTrace();
+         }
+      }
+
+      return passwordAdded;
+   }
+
+   public int verifyCredentials(String username, Password masterPassword){
+      int credentialsVerified = LOGIN_BAD;
       boolean usernameVerified = false;
       int identifier = -1;
       SecureObject s = new SecureObject();
@@ -124,7 +172,10 @@ public class Database {
       } catch (SQLException exception){
          exception.printStackTrace();
       } catch (IncorrectUsernameException exception){
-         JOptionPane.showMessageDialog(null, exception.getMessage(), "Invalid Username", 0);
+         int entry = JOptionPane.showConfirmDialog(null, exception.getMessage() + "\nWould you like to register with this username?", "Invalid Username", JOptionPane.YES_NO_OPTION);
+         if (entry == JOptionPane.YES_OPTION){
+            credentialsVerified = REGISTER;
+         }
       }
 
       if(usernameVerified && identifier != -1){
@@ -147,7 +198,7 @@ public class Database {
                String password = rs.getString("password");
                String salt = rs.getString("salt");
                if(s.verifier(masterPassword, password, salt)){
-                  credentialsVerified = true;
+                  credentialsVerified = LOGIN_GOOD;
                } else {
                   throw new IncorrectPasswordException("Incorrect Password.");
                }
@@ -163,7 +214,7 @@ public class Database {
             byte entry = (byte) JOptionPane.showConfirmDialog(null, exception.getMessage() + 
                "\nDo you want to add your currently inputted password?", "No Password.", 0);
             if (entry == JOptionPane.YES_OPTION) {
-               addCredentials(identifier, masterPassword);
+               addCredentials(identifier, username, masterPassword);
             }
          }
       }
@@ -172,7 +223,21 @@ public class Database {
    }
 
    public boolean addUser(String username, Password password){
-      return true;
+      //ID is going to be the value of the all the characters in the username multiplied by some securely random integer.
+      char userletters[] = username.toCharArray();
+      int userValue = 0;
+      for(char c: userletters){
+         userValue += Character.getNumericValue(c);
+      }
+
+      SecureRandom sr = new SecureRandom();
+      int ID = userValue * sr.nextInt(128);
+
+      if(!this.idExists(ID)){
+         return addCredentials(ID, username, password);
+      }
+      
+      return false;
    }
 
    public boolean storeGeneratedPassword(String ID, String website, String username, String password, String salt, String key){

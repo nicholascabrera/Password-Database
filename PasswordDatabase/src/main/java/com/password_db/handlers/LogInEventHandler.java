@@ -95,20 +95,20 @@ public class LogInEventHandler implements ActionListener, KeyListener {
 
             this.username = this.userField.getText();
             this.masterPassword = new Password(new String(this.passField.getPassword()));
-            
+
             if(this.userDatabase.addUser(this.username, this.masterPassword)){
                 JOptionPane.showMessageDialog(this.frame, "Registration Successful. Please Log In!", "Registration", JOptionPane.OK_OPTION);
+
             } else {
                 JOptionPane.showMessageDialog(this.frame, "Registration Unsuccessful.", "Registration", JOptionPane.OK_OPTION);
-                this.passField.setEchoChar(this.defaultEcho);
-                this.loginButton.setText("Log In");
             }
-
         } catch (InputValidationException e){
             JOptionPane.showMessageDialog(this.frame, e.getMessage(), "Input Validation", JOptionPane.OK_OPTION);
-            this.passField.setEchoChar(this.defaultEcho);
-            this.loginButton.setText("Log In");
+            userField.setText("");
         }
+
+        this.passField.setEchoChar(this.defaultEcho);
+        this.loginButton.setText("Log In");
     }
 
     private void verifyLogin(){
@@ -123,20 +123,27 @@ public class LogInEventHandler implements ActionListener, KeyListener {
 
             this.username = this.userField.getText();
             this.masterPassword = new Password(new String(this.passField.getPassword()));
-            if (userDatabase.verifyCredentials(this.username, this.masterPassword)) {
+            int dbResult = userDatabase.verifyCredentials(this.username, this.masterPassword);
+            if (dbResult == Database.LOGIN_GOOD) {
                 this.userDatabase.setUsername(this.username);
                 this.userDatabase.setPassword(this.masterPassword);
                 this.window.setInstance("portal");
                 this.frame.dispose();
+            } else if (dbResult == Database.REGISTER) {
+                JOptionPane.showMessageDialog(this.frame, "Please input your desired password.",
+                            "Registration Instructions", JOptionPane.OK_OPTION);
+                this.passField.setText("");
+                this.masterPassword = new Password();
+                this.passField.setEchoChar((char) 0);
+                this.loginButton.setText("Register");
             }
         } catch (InputValidationException err) {
             if (this.userField.getText().equals("")) {
                 int entry = JOptionPane.showConfirmDialog(this.frame,
                         err.getMessage() + "\nWould you like to register?", "No Username Input",
                         JOptionPane.YES_NO_OPTION);
-                
                 if (entry == JOptionPane.YES_OPTION) {
-                    JOptionPane.showMessageDialog(this.frame, "Please input your desired username and passwords.",
+                    JOptionPane.showMessageDialog(this.frame, "Please input your desired username and password.",
                             "Registration Instructions", JOptionPane.OK_OPTION);
                     this.passField.setEchoChar((char) 0);
                     this.loginButton.setText("Register");
