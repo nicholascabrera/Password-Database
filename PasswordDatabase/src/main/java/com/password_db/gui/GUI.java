@@ -41,6 +41,9 @@ public class GUI {
     private Database generatedDatabase;
     private String instance;
 
+    private JTable passwordTable;
+    private JScrollPane view;
+
     private boolean colorMode;
 
     private Color frameColor, paneColor, activeColor, containerColor;
@@ -171,10 +174,7 @@ public class GUI {
         // when all is said and done, it should be a constant run-time login verification system.
 
         int preferedSize = 200;
-
-        textPane.setMinimumSize(new Dimension(preferedSize+20, 150));
-        textPane.setPreferredSize(new Dimension(preferedSize+20, 150));
-        textPane.setMaximumSize(new Dimension(preferedSize+20, 150));
+        this.setAbsoluteSize(textPane, new Dimension(preferedSize+20, 150));
 
         JTextField username = new JTextField(preferedSize);
         JPasswordField password = new JPasswordField(preferedSize);
@@ -206,17 +206,13 @@ public class GUI {
         userPane.setLayout(new FlowLayout(FlowLayout.LEFT));
         userPane.setBackground(textPane.getBackground());
 
-        userPane.setMinimumSize(new Dimension(preferedSize, 20));
-        userPane.setPreferredSize(new Dimension(preferedSize, 20));
-        userPane.setMaximumSize(new Dimension(preferedSize, 20));
+        this.setAbsoluteSize(userPane, new Dimension(preferedSize, 20));
 
         JPanel passPane = new JPanel();
         passPane.setLayout(new FlowLayout(FlowLayout.LEFT));
         passPane.setBackground(textPane.getBackground());
 
-        passPane.setMinimumSize(new Dimension(preferedSize, 20));
-        passPane.setPreferredSize(new Dimension(preferedSize, 20));
-        passPane.setMaximumSize(new Dimension(preferedSize, 20));
+        this.setAbsoluteSize(passPane, new Dimension(preferedSize, 20));
 
         JLabel userLabel = new JLabel("Username");
         JLabel passLabel = new JLabel("Password");
@@ -229,9 +225,7 @@ public class GUI {
         buttonPane.setBackground(textPane.getBackground());
         loginButton.setBackground(textPane.getBackground());
 
-        buttonPane.setMinimumSize(new Dimension(preferedSize, 30));
-        buttonPane.setPreferredSize(new Dimension(preferedSize, 30));
-        buttonPane.setMaximumSize(new Dimension(preferedSize, 30));
+        this.setAbsoluteSize(buttonPane, new Dimension(preferedSize, 30));
 
         buttonPane.add(loginButton);
 
@@ -290,7 +284,7 @@ public class GUI {
         });
     }
 
-    public static JTable fillTable(Database generatedDatabase) throws Exception{
+    public void fillTable(Database generatedDatabase) throws Exception{
         Record records[] = generatedDatabase.pullAllPasswords();
 
         do{
@@ -323,7 +317,19 @@ public class GUI {
         
         table.setModel(tableModel);
 
-        return table;
+        this.passwordTable = table;
+        this.refreshTable();
+    }
+
+    public void refreshTable(){
+        this.view = new JScrollPane(this.passwordTable);
+        this.passwordTable.setFillsViewportHeight(true);
+    }
+
+    public void setAbsoluteSize(JPanel panel, Dimension dimension){
+        panel.setMinimumSize(dimension);
+        panel.setPreferredSize(dimension);
+        panel.setMaximumSize(dimension);
     }
 
     /**
@@ -390,9 +396,7 @@ public class GUI {
         containerPane.setLayout(new BoxLayout(containerPane, BoxLayout.LINE_AXIS));
         containerPane.setBackground(this.containerColor);
 
-        containerPane.setMinimumSize(new Dimension(x_dimension-100, y_dimension-80));
-        containerPane.setPreferredSize(new Dimension(x_dimension-100, y_dimension-80));
-        containerPane.setMaximumSize(new Dimension(x_dimension-100, y_dimension-80));
+        this.setAbsoluteSize(containerPane, new Dimension(x_dimension-100, y_dimension-80));
 
         JPanel menuPane = new JPanel();
         menuPane.setLayout(new BoxLayout(menuPane, BoxLayout.PAGE_AXIS));
@@ -446,9 +450,7 @@ public class GUI {
         menuPane.add(signoutButton);
         menuPane.add(exitButton);
 
-        menuPane.setMinimumSize(new Dimension(buttonWidth, buttonHeight*7));
-        menuPane.setPreferredSize(new Dimension(buttonWidth, buttonHeight*7));
-        menuPane.setMaximumSize(new Dimension(buttonWidth, buttonHeight*7));
+        this.setAbsoluteSize(menuPane, new Dimension(buttonWidth, buttonHeight*7));
         
         // CENTER PANE 
         int preferedSize = 375;
@@ -456,10 +458,7 @@ public class GUI {
         JPanel welcomeWrapper = new JPanel();
         welcomeWrapper.setLayout(new BoxLayout(welcomeWrapper, BoxLayout.LINE_AXIS));
         welcomeWrapper.setBackground(this.transparentColor);
-
-        welcomeWrapper.setMinimumSize(new Dimension(preferedSize, buttonHeight));
-        welcomeWrapper.setPreferredSize(new Dimension(preferedSize, buttonHeight));
-        welcomeWrapper.setMaximumSize(new Dimension(preferedSize, buttonHeight));
+        this.setAbsoluteSize(welcomeWrapper, new Dimension(preferedSize, buttonHeight));
 
         JPanel welcome = new JPanel();
         welcome.setLayout(new BorderLayout());
@@ -468,9 +467,7 @@ public class GUI {
         JLabel welcomeLabel = new JLabel("Welcome back, " + this.getUsername());
         welcomeLabel.setBackground(this.paneColor);
 
-        welcome.setMinimumSize(new Dimension((preferedSize/2) - 15, buttonHeight-10));
-        welcome.setPreferredSize(new Dimension((preferedSize/2) - 15, buttonHeight-10));
-        welcome.setMaximumSize(new Dimension((preferedSize/2) - 15, buttonHeight-10));
+        this.setAbsoluteSize(welcome, new Dimension((preferedSize/2) - 15, buttonHeight-10));
 
         JPanel containerColorRigidHorizontal = new JPanel();
         containerColorRigidHorizontal.setBackground(this.transparentColor);
@@ -492,28 +489,24 @@ public class GUI {
         search.setPreferredSize(new Dimension(preferedSize, 20));
         search.setMaximumSize(new Dimension(preferedSize, 20));
 
-        JTable passwordTable = fillTable(generatedDatabase);
+        this.fillTable(generatedDatabase);
 
-        TableColumn column = passwordTable.getColumnModel().getColumn(0);
+        TableColumn column = this.passwordTable.getColumnModel().getColumn(0);
         column.setPreferredWidth(column.getWidth() - 90);
 
-        column = passwordTable.getColumnModel().getColumn(1);
+        column = this.passwordTable.getColumnModel().getColumn(1);
         column.setPreferredWidth(column.getWidth() - 90);
 
-        JScrollPane view = new JScrollPane(passwordTable);
-        passwordTable.setFillsViewportHeight(true);
+        this.refreshTable();
 
-        view.setMinimumSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
-        view.setPreferredSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
-        view.setMaximumSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
+        this.view.setMinimumSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
+        this.view.setPreferredSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
+        this.view.setMaximumSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
 
         JPanel containerColorRigidVertical = new JPanel();
         containerColorRigidVertical.setBackground(this.transparentColor);
         containerColorRigidVertical.add(Box.createRigidArea(new Dimension(0, 5)));
-
-        containerColorRigidVertical.setMinimumSize(new Dimension(0, 5));
-        containerColorRigidVertical.setPreferredSize(new Dimension(0, 5));
-        containerColorRigidVertical.setMaximumSize(new Dimension(0, 5));
+        this.setAbsoluteSize(containerColorRigidVertical, new Dimension(0, 5));
 
         JPanel containerColorGlue = new JPanel();
         containerColorGlue.setBackground(this.transparentColor);
@@ -524,9 +517,7 @@ public class GUI {
         content.add(Box.createGlue());
         content.add(view);
 
-        content.setMinimumSize(new Dimension(preferedSize, (buttonHeight*6) - 10));
-        content.setPreferredSize(new Dimension(preferedSize, (buttonHeight*6) - 10));
-        content.setMaximumSize(new Dimension(preferedSize, (buttonHeight*6) - 10));
+        this.setAbsoluteSize(content, new Dimension(preferedSize, (buttonHeight*6) - 10));
         content.setBorder(new RoundedBorder(10, this.containerColor, this.frameColor));
 
         centerPane.add(welcomeWrapper);

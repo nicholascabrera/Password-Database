@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 
 import com.password_db.databases.Database;
 import com.password_db.exceptions.InputValidationException;
+import com.password_db.gui.GUI;
 
 public class Password {
 
@@ -56,7 +57,7 @@ public class Password {
         this.evaluate();
     }
 
-    public void init(Database database) throws Exception{
+    public void init(Database database, GUI window) throws Exception{
         String website = this.getWebsite();
         if(website.equals("")){
             return;
@@ -80,30 +81,22 @@ public class Password {
             SecureObject s = new SecureObject();
             s.init();
             byte[] salt = SecureObject.generateSalt(16);    // 16 bytes, or 128 bits. This is more than enough to avoid collision.
-            System.out.println("Password Salt: " + Base64.getEncoder().encodeToString(salt));
 
             // encrypt the password. It is ready to store.
             byte[] encryptedPassword = s.encrypt(password123, salt);
-            System.out.println("Encrypted Generated Password: " + Base64.getEncoder().encodeToString(encryptedPassword));
 
 
             // prepare to encrypt the key.
             Password masterPassword = database.getPassword();
-            System.out.println("Master Password: " + masterPassword.getPassword());
             String key = s.getKey();
-            System.out.println("Password Key: " + key);
 
             // encrypt the key. It is ready to store.
             byte[] encryptedKey = s.encrypt(Base64.getDecoder().decode(key), masterPassword);
-            System.out.println("Encrypted Password Key: " + Base64.getEncoder().encodeToString(encryptedKey));
 
             // concatenate the website username, website, and master username, then hash it to use as the ID.
             String identifier = ((username.concat(website)).concat(database.getUsername())).concat(masterPassword.getPassword());
-            System.out.println(identifier);
             byte[] hashSalt = Base64.getDecoder().decode("ABCDEFGHIJKLMNOP");
-            System.out.println(hashSalt);
             String id = s.argonHash(identifier, hashSalt);     // ID has been created. It is ready to store.
-            System.out.println(id);
 
             // perform storing operations.
             if(database.storeGeneratedPassword(id, website, username, 
@@ -112,6 +105,8 @@ public class Password {
                 Base64.getEncoder().encodeToString(encryptedKey)))
             {
                 System.out.println("Data storage completed successfuly.");
+                window.fillTable(database);
+                window.refreshTable();
             }
         }
     }
@@ -120,7 +115,7 @@ public class Password {
         String website = "\n";
         do{
             String input = JOptionPane.showInputDialog(null, "What website or application is this for?");
-            Pattern inputPattern = Pattern.compile("^[A-Za-z0-9]{0,20}$");
+            Pattern inputPattern = Pattern.compile("^[A-Za-z0-9./]{0,20}$");
 
             if(input != null){
                 try{
