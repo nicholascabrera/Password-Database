@@ -259,6 +259,37 @@ public class GUI {
         loginFrame.setVisible(true);
     }
 
+    private void configureButton(JButton button){
+        int buttonWidth = 90;
+        int buttonHeight = 43;
+
+        button.setMinimumSize(new Dimension(buttonWidth, buttonHeight));
+        button.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
+        button.setMaximumSize(new Dimension(buttonWidth, buttonHeight));
+
+        button.setBackground(paneColor);
+        button.setContentAreaFilled(false);
+        button.setBorderPainted(false);
+        button.setFocusPainted(false);
+        button.setOpaque(true);
+        button.getModel().addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                ButtonModel model = (ButtonModel) e.getSource();
+                if (model.isRollover()) {
+                    button.setBackground(activeColor);
+                    button.setForeground(paneColor);
+                    button.setBorderPainted(true);
+                    button.setBorder(BorderFactory.createLineBorder(borderColor, 2));
+                } else {
+                    button.setBorderPainted(false);
+                    button.setBackground(paneColor);
+                    button.setForeground(Color.BLACK);
+                }
+            }
+        });
+    }
+
     /**
      * This instance displays the portal shown in the .drawio and displays the username as a welcome.
      * 
@@ -345,147 +376,22 @@ public class GUI {
         int buttonHeight = 43;
 
         final JButton accountButton = new JButton("Account");
-        accountButton.setMinimumSize(new Dimension(buttonWidth, buttonHeight));
-        accountButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
-        accountButton.setMaximumSize(new Dimension(buttonWidth, buttonHeight));
-
-        accountButton.setBackground(paneColor);
-        accountButton.setContentAreaFilled(false);
-        accountButton.setBorderPainted(false);
-        accountButton.setFocusPainted(false);
-        accountButton.setOpaque(true);
-        accountButton.getModel().addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                ButtonModel model = (ButtonModel) e.getSource();
-                if (model.isRollover()) {
-                    accountButton.setBackground(activeColor);
-                    accountButton.setForeground(paneColor);
-                    accountButton.setBorderPainted(true);
-                    accountButton.setBorder(BorderFactory.createLineBorder(borderColor, 2));
-                } else {
-                    accountButton.setBorderPainted(false);
-                    accountButton.setBackground(paneColor);
-                    accountButton.setForeground(Color.BLACK);
-                }
-            }
-        });
+        this.configureButton(accountButton);
 
         final JButton settingsButton = new JButton("Settings");
-        settingsButton.setMinimumSize(new Dimension(buttonWidth, buttonHeight));
-        settingsButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
-        settingsButton.setMaximumSize(new Dimension(buttonWidth, buttonHeight));
-
-        settingsButton.setBackground(paneColor);
-        settingsButton.setContentAreaFilled(false);
-        settingsButton.setBorderPainted(false);
-        settingsButton.setFocusPainted(false);
-        settingsButton.setOpaque(true);
-        settingsButton.getModel().addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                ButtonModel model = (ButtonModel) e.getSource();
-                if (model.isRollover()) {
-                    settingsButton.setBackground(activeColor);
-                    settingsButton.setForeground(paneColor);
-                    settingsButton.setBorderPainted(true);
-                    settingsButton.setBorder(BorderFactory.createLineBorder(borderColor, 2));
-                } else {
-                    settingsButton.setBorderPainted(false);
-                    settingsButton.setBackground(paneColor);
-                    settingsButton.setForeground(Color.BLACK);
-                }
-            }
-        });
+        this.configureButton(settingsButton);
 
         final JButton generateButton = new JButton("Generate");
-        generateButton.setMinimumSize(new Dimension(buttonWidth, buttonHeight));
-        generateButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
-        generateButton.setMaximumSize(new Dimension(buttonWidth, buttonHeight));
-
-        generateButton.setBackground(paneColor);
-        generateButton.setContentAreaFilled(false);
-        generateButton.setBorderPainted(false);
-        generateButton.setFocusPainted(false);
-        generateButton.setOpaque(true);
-
-        generateButton.getModel().addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                ButtonModel model = (ButtonModel) e.getSource();
-                if (model.isRollover()) {
-                    generateButton.setBackground(activeColor);
-                    generateButton.setForeground(paneColor);
-                    generateButton.setBorderPainted(true);
-                    generateButton.setBorder(BorderFactory.createLineBorder(borderColor, 2));
-                } else {
-                    generateButton.setBorderPainted(false);
-                    generateButton.setBackground(paneColor);
-                    generateButton.setForeground(Color.BLACK);
-                }
-            }
-        });
-
+        this.configureButton(generateButton);
         generateButton.setActionCommand("generate");
 
 
         final JButton signoutButton = new JButton("Sign Out");
-        signoutButton.setMinimumSize(new Dimension(buttonWidth, buttonHeight));
-        signoutButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
-        signoutButton.setMaximumSize(new Dimension(buttonWidth, buttonHeight));
-
-        signoutButton.setBackground(paneColor);
-        signoutButton.setContentAreaFilled(false);
-        signoutButton.setBorderPainted(false);
-        signoutButton.setFocusPainted(false);
-        signoutButton.setOpaque(true);
-
-        signoutButton.getModel().addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                ButtonModel model = (ButtonModel) e.getSource();
-                if (model.isRollover()) {
-                    signoutButton.setBackground(activeColor);
-                    signoutButton.setForeground(paneColor);
-                    signoutButton.setBorderPainted(true);
-                    signoutButton.setBorder(BorderFactory.createLineBorder(borderColor, 2));
-                } else {
-                    signoutButton.setBorderPainted(false);
-                    signoutButton.setBackground(paneColor);
-                    signoutButton.setForeground(Color.BLACK);
-                }
-            }
-        });
-
+        this.configureButton(signoutButton);
         signoutButton.setActionCommand("logout");;
 
         final JButton exitButton = new JButton("Exit");
-        exitButton.setMinimumSize(new Dimension(buttonWidth, buttonHeight));
-        exitButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
-        exitButton.setMaximumSize(new Dimension(buttonWidth, buttonHeight));
-
-        exitButton.setBackground(paneColor);
-        exitButton.setContentAreaFilled(false);
-        exitButton.setBorderPainted(false);
-        exitButton.setFocusPainted(false);
-        exitButton.setOpaque(true);
-        exitButton.getModel().addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                ButtonModel model = (ButtonModel) e.getSource();
-                if (model.isRollover()) {
-                    exitButton.setBackground(activeColor);
-                    exitButton.setForeground(paneColor);
-                    exitButton.setBorderPainted(true);
-                    exitButton.setBorder(BorderFactory.createLineBorder(borderColor, 2));
-                } else {
-                    exitButton.setBorderPainted(false);
-                    exitButton.setBackground(paneColor);
-                    exitButton.setForeground(Color.BLACK);
-                }
-            }
-        });
-
+        this.configureButton(exitButton);
         exitButton.setActionCommand("exit");
 
         this.portalHandler = new PortalEventHandler(this, portalFrame, this.generatedDatabase);
@@ -551,6 +457,14 @@ public class GUI {
         search.setMaximumSize(new Dimension(preferedSize, 20));
         
         Record records[] = generatedDatabase.pullAllPasswords();
+
+        do{
+            try{
+                Thread.sleep(500);
+            } catch (InterruptedException e){
+                e.printStackTrace();
+            }
+        } while (generatedDatabase.getProcessStatus() == Database.ONGOING);
         
         String recordsString[][] = new String[records.length][3];
 

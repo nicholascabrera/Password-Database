@@ -23,6 +23,10 @@ public class Database {
    private String username;
    private Password masterPassword;
 
+   public static final int NO_PROCESS = 0, ONGOING = 1, DONE = 2;
+
+   private int processStatus = NO_PROCESS;
+
    public static final int LOGIN_GOOD = 0, LOGIN_BAD = 1, REGISTER = 2;
 
    /**
@@ -67,6 +71,8 @@ public class Database {
    }
 
    public boolean idExists(int ID){
+      this.processStatus = ONGOING;
+
       try (
          Connection conn = DriverManager.getConnection(
             "jdbc:mysql://localhost:3306/user_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
@@ -78,6 +84,7 @@ public class Database {
 
          ResultSet rs = parameterizedQuery.executeQuery();
          
+         this.processStatus = DONE;
          return rs.next();
 
       } catch(SQLException e){
@@ -88,6 +95,7 @@ public class Database {
    }
 
    public boolean addCredentials(int ID, String username, Password masterPassword){
+      this.processStatus = ONGOING;
       boolean usernameAdded = false;
       boolean passwordAdded = false;
 
@@ -139,10 +147,12 @@ public class Database {
          }
       }
 
+      this.processStatus = DONE;
       return passwordAdded;
    }
 
    public int verifyCredentials(String username, Password masterPassword){
+      this.processStatus = ONGOING;
       int credentialsVerified = LOGIN_BAD;
       boolean usernameVerified = false;
       int identifier = -1;
@@ -218,10 +228,12 @@ public class Database {
          }
       }
 
+      this.processStatus = DONE;
       return credentialsVerified;
    }
 
    public boolean addUser(String username, Password password){
+      this.processStatus = ONGOING;
       //ID is going to be the value of the all the characters in the username multiplied by some securely random integer.
       char userletters[] = username.toCharArray();
       int userValue = 0;
@@ -240,6 +252,7 @@ public class Database {
    }
 
    public boolean storeGeneratedPassword(String ID, String website, String username, String password, String salt, String key){
+      this.processStatus = ONGOING;
       try (
          Connection conn = DriverManager.getConnection(
             "jdbc:mysql://localhost:3306/generated_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
@@ -280,6 +293,8 @@ public class Database {
       } catch (SQLException e) {
          e.printStackTrace();
       }
+
+      this.processStatus = DONE;
       return false;
    }
 
@@ -298,6 +313,7 @@ public class Database {
    }
 
    public Record[] pullAllPasswords() throws Exception{
+      this.processStatus = ONGOING;
       // in order to pull the passwords, the reader will read the recorded username and website from website_users
       // concatenate them with the master username and master password the user provides, then checks to see if it matches the 
       // ID recorded in the table. Then and only then, will they reader pull from e_passwords and e_keys.
@@ -356,6 +372,16 @@ public class Database {
       } catch (SQLException e) {
          e.printStackTrace();
       }
+
+      this.processStatus = DONE;
       return records;
+   }
+
+   public int getProcessStatus(){
+      return processStatus;
+   }
+
+   public void setStatus(int status){
+      this.processStatus = status;
    }
 }

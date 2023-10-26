@@ -39,10 +39,11 @@ public class PortalEventHandler implements ActionListener, KeyListener  {
             } catch (Exception err){
                 err.printStackTrace();
             }
+            this.portalFrame.dispose();
+            window.setInstance("portal");
         } else if(e.getActionCommand() == "exit"){
             this.window.setUsername("");
             this.window.setPassword(new Password());
-            this.portalFrame.dispose();
             System.exit(0);
         }
     }

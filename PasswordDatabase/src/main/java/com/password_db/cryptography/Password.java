@@ -113,8 +113,6 @@ public class Password {
             {
                 System.out.println("Data storage completed successfuly.");
             }
-
-            database.pullAllPasswords();
         }
     }
 
