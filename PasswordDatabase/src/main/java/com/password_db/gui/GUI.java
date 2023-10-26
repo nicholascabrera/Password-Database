@@ -290,6 +290,42 @@ public class GUI {
         });
     }
 
+    public static JTable fillTable(Database generatedDatabase) throws Exception{
+        Record records[] = generatedDatabase.pullAllPasswords();
+
+        do{
+            try{
+                Thread.sleep(500);
+            } catch (InterruptedException e){
+                e.printStackTrace();
+            }
+        } while (generatedDatabase.getProcessStatus() == Database.ONGOING);
+        
+        String recordsString[][] = new String[records.length][3];
+
+        for(int record = 0; record < records.length; record++){
+            for(int field = 0; field < 3; field ++){
+                recordsString[record][field] = records[record].getRecord()[field];
+            }
+
+        }
+        String fieldNames[] = {"Application", "Username", "Password"};
+
+        JTable table = new JTable(recordsString, fieldNames);
+        DefaultTableModel tableModel = new DefaultTableModel(recordsString, fieldNames) {
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                //all cells false
+                return false;
+            }
+        };
+        
+        table.setModel(tableModel);
+
+        return table;
+    }
+
     /**
      * This instance displays the portal shown in the .drawio and displays the username as a welcome.
      * 
@@ -455,39 +491,8 @@ public class GUI {
         search.setMinimumSize(new Dimension(preferedSize, 20));
         search.setPreferredSize(new Dimension(preferedSize, 20));
         search.setMaximumSize(new Dimension(preferedSize, 20));
-        
-        Record records[] = generatedDatabase.pullAllPasswords();
 
-        do{
-            try{
-                Thread.sleep(500);
-            } catch (InterruptedException e){
-                e.printStackTrace();
-            }
-        } while (generatedDatabase.getProcessStatus() == Database.ONGOING);
-        
-        String recordsString[][] = new String[records.length][3];
-
-        for(int record = 0; record < records.length; record++){
-            for(int field = 0; field < 3; field ++){
-                recordsString[record][field] = records[record].getRecord()[field];
-            }
-
-        }
-
-        String fieldNames[] = {"Application", "Username", "Password"};
-
-        JTable passwordTable = new JTable(recordsString, fieldNames);
-        DefaultTableModel tableModel = new DefaultTableModel(recordsString, fieldNames) {
-
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                //all cells false
-                return false;
-            }
-        };
-        
-        passwordTable.setModel(tableModel);
+        JTable passwordTable = fillTable(generatedDatabase);
 
         TableColumn column = passwordTable.getColumnModel().getColumn(0);
         column.setPreferredWidth(column.getWidth() - 90);
