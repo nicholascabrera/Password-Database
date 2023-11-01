@@ -26,7 +26,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 import com.password_db.cryptography.Password;
-import com.password_db.databases.Database;
+import com.password_db.databases.DatabaseTaskManager;
 import com.password_db.handlers.LogInEventHandler;
 import com.password_db.handlers.PortalEventHandler;
 
@@ -37,8 +37,8 @@ public class GUI {
     private int x_dimension, y_dimension, x_location, y_location;
     private LogInEventHandler loginHandler;
     private PortalEventHandler portalHandler;
-    private Database userDatabase;
-    private Database generatedDatabase;
+    private Database database;
+    private DatabaseTaskManager taskManager;
     private String instance;
 
     private JTable passwordTable;
@@ -58,8 +58,8 @@ public class GUI {
         this.x_location = 375;
         this.y_location = 100;
 
-        this.userDatabase = new Database("-1", new Password("-1"));
-        this.generatedDatabase = new Database();
+        this.database = new Database("-1", new Password("-1"));
+        this.taskManager = new DatabaseTaskManager(this.database);
 
         this.borderColor = new Color(0xCCAC00);
 
@@ -108,8 +108,6 @@ public class GUI {
                 this.loginInstance();
                 break;
             case "portal":
-                this.generatedDatabase.setPassword(userDatabase.getPassword());
-                this.generatedDatabase.setUsername(userDatabase.getUsername());
                 this.instance = "portal";
                 
                 try {
@@ -118,6 +116,14 @@ public class GUI {
                     e.printStackTrace();
                 }
 
+                break;
+            case "account":
+                break;
+            case "settings":
+                break;
+            case "load":
+                this.instance = "load";
+                this.loadScreenInstance();
                 break;
         }
     }
@@ -180,7 +186,7 @@ public class GUI {
         JPasswordField password = new JPasswordField(preferedSize);
         JButton loginButton = new JButton("Log In");
 
-        loginHandler = new LogInEventHandler(this, this.userDatabase, loginFrame, username, password, loginButton);
+        loginHandler = new LogInEventHandler(this, this.taskManager, loginFrame, username, password, loginButton);
 
         username.setMinimumSize(new Dimension(preferedSize, 20));
         password.setMinimumSize(new Dimension(preferedSize, 20));
@@ -284,16 +290,8 @@ public class GUI {
         });
     }
 
-    public void fillTable(Database generatedDatabase) throws Exception{
-        Record records[] = generatedDatabase.pullAllPasswords();
-
-        do{
-            try{
-                Thread.sleep(500);
-            } catch (InterruptedException e){
-                e.printStackTrace();
-            }
-        } while (generatedDatabase.getProcessStatus() == Database.ONGOING);
+    public void fillTable(Database database) throws Exception{
+        Record records[] = database.pullAllPasswords();
         
         String recordsString[][] = new String[records.length][3];
 
@@ -310,8 +308,10 @@ public class GUI {
 
             @Override
             public boolean isCellEditable(int row, int column) {
-                //all cells false
-                return false;
+                if(this.getColumnName(column) == fieldNames[2]){
+                    return false;
+                }
+                return true;
             }
         };
         
@@ -434,7 +434,7 @@ public class GUI {
         this.configureButton(exitButton);
         exitButton.setActionCommand("exit");
 
-        this.portalHandler = new PortalEventHandler(this, portalFrame, this.generatedDatabase);
+        this.portalHandler = new PortalEventHandler(this, portalFrame, this.database);
         
         portalFrame.addKeyListener(this.portalHandler);
         signoutButton.addActionListener(this.portalHandler);
@@ -489,7 +489,7 @@ public class GUI {
         search.setPreferredSize(new Dimension(preferedSize, 20));
         search.setMaximumSize(new Dimension(preferedSize, 20));
 
-        this.fillTable(generatedDatabase);
+        this.fillTable(database);
 
         TableColumn column = this.passwordTable.getColumnModel().getColumn(0);
         column.setPreferredWidth(column.getWidth() - 90);
@@ -553,18 +553,63 @@ public class GUI {
     }
 
     public String getUsername(){
-        return this.userDatabase.getUsername();
+        return this.database.getUsername();
     }
 
     public Password getPassword(){
-        return this.userDatabase.getPassword();
+        return this.database.getPassword();
     }
 
     public void setUsername(String username){
-        this.userDatabase.setUsername(username);
+        this.database.setUsername(username);
     }
 
     public void setPassword(Password password){
-        this.userDatabase.setPassword(password);
+        this.database.setPassword(password);
+    }
+
+    public void loadScreenInstance(){
+        try { 
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        JFrame portalFrame = new JFrame("Orchid - Load");
+        portalFrame.setPreferredSize(new Dimension(this.x_dimension, this.y_dimension));
+        portalFrame.setLocation(this.x_location, this.y_location);
+        portalFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        portalFrame.setResizable(false);
+
+        Container contentPane = portalFrame.getContentPane();
+        contentPane.setBackground(this.frameColor);
+
+        JBPanel background = new JBPanel();
+
+        try {
+            background = new JBPanel("bc74860b1841a4dfe5aa9e3ea2571e36.jpg", this.x_dimension, this.y_dimension);
+            background.setLayout(new BorderLayout());
+        } catch (IOException e) {
+            System.out.print("Bad image load.");
+        }
+
+        JPanel coloredBorderPane = new TransparentPanel();
+        coloredBorderPane.setLayout(new BoxLayout(coloredBorderPane, BoxLayout.PAGE_AXIS));
+        coloredBorderPane.setBackground(contentPane.getBackground());
+
+
+        background.add(coloredBorderPane);
+
+        contentPane.add(background);
+
+        portalFrame.pack();
+        portalFrame.setVisible(true);
     }
 }
+
+/**
+ * Right Click:
+ * - Allows password regeneration
+ * - Allows copying of records
+ * - 
+ */

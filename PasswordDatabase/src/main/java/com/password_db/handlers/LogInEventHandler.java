@@ -1,5 +1,6 @@
 package com.password_db.handlers;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -13,7 +14,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import com.password_db.cryptography.Password;
-import com.password_db.databases.Database;
+import com.password_db.databases.DatabaseTaskManager;
 import com.password_db.exceptions.InputValidationException;
 import com.password_db.gui.GUI;
 
@@ -22,6 +23,7 @@ public class LogInEventHandler implements ActionListener, KeyListener {
     private GUI window;
     private JFrame frame;
     private Database userDatabase;
+    private DatabaseTaskManager taskManager;
 
     private JTextField userField;
     private JPasswordField passField;
@@ -32,12 +34,12 @@ public class LogInEventHandler implements ActionListener, KeyListener {
 
     private char defaultEcho;
 
-    public LogInEventHandler(GUI window, Database userDatabase, JFrame frame, JTextField userField, JPasswordField passField, JButton loginButton){
+    public LogInEventHandler(GUI window, DatabaseTaskManager taskManager, JFrame frame, JTextField userField, JPasswordField passField, JButton loginButton){
         this.window = window;
         this.frame = frame;
         this.userField = userField;
         this.passField = passField;
-        this.userDatabase = userDatabase;
+        this.taskManager = taskManager;
         this.loginButton = loginButton;
 
         this.defaultEcho = this.passField.getEchoChar();
@@ -96,6 +98,12 @@ public class LogInEventHandler implements ActionListener, KeyListener {
             this.username = this.userField.getText();
             this.masterPassword = new Password(new String(this.passField.getPassword()));
 
+            //prevents interleaving
+            synchronized(this.taskManager){
+                this.taskManager.setChoice(DatabaseTaskManager.ADD_USER);
+                this.taskManager.setParameters(new Object[]{this.username, this.masterPassword});
+            }
+            
             if(this.userDatabase.addUser(this.username, this.masterPassword)){
                 JOptionPane.showMessageDialog(this.frame, "Registration Successful. Please Log In!", "Registration", JOptionPane.OK_OPTION);
 
@@ -127,6 +135,7 @@ public class LogInEventHandler implements ActionListener, KeyListener {
             if (dbResult == Database.LOGIN_GOOD) {
                 this.userDatabase.setUsername(this.username);
                 this.userDatabase.setPassword(this.masterPassword);
+                this.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 this.window.setInstance("portal");
                 this.frame.dispose();
             } else if (dbResult == Database.REGISTER) {

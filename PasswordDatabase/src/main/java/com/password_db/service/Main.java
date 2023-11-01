@@ -1,4 +1,6 @@
 package com.password_db.service;
+import javax.swing.SwingUtilities;
+
 import com.password_db.gui.GUI;
 
 public class Main {
@@ -33,17 +35,21 @@ public class Main {
      */
     public static void main(String[] args) throws Exception {
         // start up window and initialize for login requirement
-        GUI window = new GUI();
-        window.init();
-
-        // wait until the login has been entered, which is known because the instance changes
-        do{
-            try{
-                Thread.sleep(1000);
-            } catch (InterruptedException e){
-                e.printStackTrace();
+        SwingUtilities.invokeLater(new Runnable(){
+            public void run(){
+                GUI window = new GUI();
+                window.init();
             }
-        } while (window.getInstance().equals("login"));
+        });
+        
+        // wait until the login has been entered, which is known because the instance changes
+        // do{
+        //     try{
+        //         Thread.sleep(1000);
+        //     } catch (InterruptedException e){
+        //         e.printStackTrace();
+        //     }
+        // } while (window.getInstance().equals("login"));
 
         // retrieve login information from the window
         //String username = window.getUsername();
