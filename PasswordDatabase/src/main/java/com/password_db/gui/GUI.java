@@ -26,6 +26,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 import com.password_db.cryptography.Password;
+import com.password_db.databases.Database;
 import com.password_db.databases.DatabaseTaskManager;
 import com.password_db.handlers.LogInEventHandler;
 import com.password_db.handlers.PortalEventHandler;
@@ -38,7 +39,6 @@ public class GUI {
     private LogInEventHandler loginHandler;
     private PortalEventHandler portalHandler;
     private Database database;
-    private DatabaseTaskManager taskManager;
     private String instance;
 
     private JTable passwordTable;
@@ -59,7 +59,6 @@ public class GUI {
         this.y_location = 100;
 
         this.database = new Database("-1", new Password("-1"));
-        this.taskManager = new DatabaseTaskManager(this.database);
 
         this.borderColor = new Color(0xCCAC00);
 
@@ -99,6 +98,11 @@ public class GUI {
 
     public boolean getColor(){
         return this.colorMode;
+    }
+
+    public void setInstance(String instance, JFrame frame){
+        this.setInstance(instance);
+        frame.dispose();
     }
 
     public void setInstance(String instance){
@@ -186,7 +190,7 @@ public class GUI {
         JPasswordField password = new JPasswordField(preferedSize);
         JButton loginButton = new JButton("Log In");
 
-        loginHandler = new LogInEventHandler(this, this.taskManager, loginFrame, username, password, loginButton);
+        loginHandler = new LogInEventHandler(this, this.database, loginFrame, username, password, loginButton);
 
         username.setMinimumSize(new Dimension(preferedSize, 20));
         password.setMinimumSize(new Dimension(preferedSize, 20));
@@ -290,7 +294,7 @@ public class GUI {
         });
     }
 
-    public void fillTable(Database database) throws Exception{
+    public void fillTable(DatabaseTaskManager taskManager) throws Exception{
         Record records[] = database.pullAllPasswords();
         
         String recordsString[][] = new String[records.length][3];
@@ -489,7 +493,7 @@ public class GUI {
         search.setPreferredSize(new Dimension(preferedSize, 20));
         search.setMaximumSize(new Dimension(preferedSize, 20));
 
-        this.fillTable(database);
+        this.fillTable(new DatabaseTaskManager(this.database));
 
         TableColumn column = this.passwordTable.getColumnModel().getColumn(0);
         column.setPreferredWidth(column.getWidth() - 90);

@@ -27,8 +27,6 @@ public class Database {
 
    private int processStatus = NO_PROCESS;
 
-   public static final int LOGIN_GOOD = 0, LOGIN_BAD = 1, REGISTER = 2;
-
    /**
     * In order to prevent SQL Injection, I will need several things:
     * - Parameterized Queries,
@@ -151,9 +149,9 @@ public class Database {
       return passwordAdded;
    }
 
-   public int verifyCredentials(String username, Password masterPassword){
+   public LogIn verifyCredentials(String username, Password masterPassword) throws IncorrectUsernameException{
       this.processStatus = ONGOING;
-      int credentialsVerified = LOGIN_BAD;
+      LogIn credentialsVerified = LogIn.LOGIN_BAD;
       boolean usernameVerified = false;
       int identifier = -1;
       SecureObject s = new SecureObject();
@@ -181,11 +179,6 @@ public class Database {
 
       } catch (SQLException exception){
          exception.printStackTrace();
-      } catch (IncorrectUsernameException exception){
-         int entry = JOptionPane.showConfirmDialog(null, exception.getMessage() + "\nWould you like to register with this username?", "Invalid Username", JOptionPane.YES_NO_OPTION);
-         if (entry == JOptionPane.YES_OPTION){
-            credentialsVerified = REGISTER;
-         }
       }
 
       if(usernameVerified && identifier != -1){
@@ -207,7 +200,7 @@ public class Database {
                String password = rs.getString("password");
                String salt = rs.getString("salt");
                if(s.verifier(masterPassword, password, salt)){
-                  credentialsVerified = LOGIN_GOOD;
+                  credentialsVerified = LogIn.LOGIN_GOOD;
                } else {
                   throw new IncorrectPasswordException("Incorrect Password.");
                }

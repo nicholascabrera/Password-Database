@@ -105,8 +105,6 @@ public class Password {
                 Base64.getEncoder().encodeToString(encryptedKey)))
             {
                 System.out.println("Data storage completed successfuly.");
-                window.fillTable(database);
-                window.refreshTable();
             }
         }
     }

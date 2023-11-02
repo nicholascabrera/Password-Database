@@ -14,7 +14,9 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import com.password_db.cryptography.Password;
+import com.password_db.databases.Database;
 import com.password_db.databases.DatabaseTaskManager;
+import com.password_db.databases.TaskManager;
 import com.password_db.exceptions.InputValidationException;
 import com.password_db.gui.GUI;
 
@@ -34,14 +36,13 @@ public class LogInEventHandler implements ActionListener, KeyListener {
 
     private char defaultEcho;
 
-    public LogInEventHandler(GUI window, DatabaseTaskManager taskManager, JFrame frame, JTextField userField, JPasswordField passField, JButton loginButton){
+    public LogInEventHandler(GUI window, Database userDatabase, JFrame frame, JTextField userField, JPasswordField passField, JButton loginButton){
         this.window = window;
         this.frame = frame;
         this.userField = userField;
         this.passField = passField;
-        this.taskManager = taskManager;
         this.loginButton = loginButton;
-
+        this.userDatabase = userDatabase;
         this.defaultEcho = this.passField.getEchoChar();
     }
 
@@ -50,7 +51,23 @@ public class LogInEventHandler implements ActionListener, KeyListener {
             if(this.passField.getEchoChar() == (char)0 && this.loginButton.getText().equals("Register")){
                 this.registerUser();
             } else {
-                this.verifyLogin();
+                try{
+                    this.verifyLogin();
+                } catch (InputValidationException err) {
+                    if (this.userField.getText().equals("")) {
+                        int entry = JOptionPane.showConfirmDialog(this.frame,
+                                err.getMessage() + "\nWould you like to register?", "No Username Input",
+                                JOptionPane.YES_NO_OPTION);
+                        if (entry == JOptionPane.YES_OPTION) {
+                            JOptionPane.showMessageDialog(this.frame, "Please input your desired username and password.",
+                                    "Registration Instructions", JOptionPane.OK_OPTION);
+                            this.passField.setEchoChar((char) 0);
+                            this.loginButton.setText("Register");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this.frame, err.getMessage(), "Input Validation", JOptionPane.OK_OPTION);
+                    }
+                }
             }
         }
     }
@@ -65,11 +82,7 @@ public class LogInEventHandler implements ActionListener, KeyListener {
     @Override
     public void keyTyped(KeyEvent e) {
         if(e.getKeyChar() == '\n'){
-            if(this.passField.getEchoChar() == (char)0  && this.loginButton.getText().equals("Register")){
-                this.registerUser();
-            } else {
-                this.verifyLogin();
-            }
+            this.actionPerformed(new ActionEvent(e.getSource(), e.getID(), "login"));
         }
     }
 
@@ -98,18 +111,17 @@ public class LogInEventHandler implements ActionListener, KeyListener {
             this.username = this.userField.getText();
             this.masterPassword = new Password(new String(this.passField.getPassword()));
 
+            //SwingWorkers are not reusable.
+            this.taskManager = new DatabaseTaskManager(this.window, this.userDatabase, this.passField, this.loginButton);
+
             //prevents interleaving
             synchronized(this.taskManager){
-                this.taskManager.setChoice(DatabaseTaskManager.ADD_USER);
-                this.taskManager.setParameters(new Object[]{this.username, this.masterPassword});
+                this.taskManager.setChoice(TaskManager.ADD_USER);
+                this.taskManager.setParameters(new Object[]{this.username, this.masterPassword, this.frame});
             }
-            
-            if(this.userDatabase.addUser(this.username, this.masterPassword)){
-                JOptionPane.showMessageDialog(this.frame, "Registration Successful. Please Log In!", "Registration", JOptionPane.OK_OPTION);
 
-            } else {
-                JOptionPane.showMessageDialog(this.frame, "Registration Unsuccessful.", "Registration", JOptionPane.OK_OPTION);
-            }
+            this.taskManager.execute();
+
         } catch (InputValidationException e){
             JOptionPane.showMessageDialog(this.frame, e.getMessage(), "Input Validation", JOptionPane.OK_OPTION);
             userField.setText("");
@@ -119,47 +131,29 @@ public class LogInEventHandler implements ActionListener, KeyListener {
         this.loginButton.setText("Log In");
     }
 
-    private void verifyLogin(){
+    private void verifyLogin() throws InputValidationException{
         //I need to perform Input Validation here.
         Pattern userPattern = Pattern.compile("^[A-Za-z0-9.]{3,20}$");
         Pattern passwordPattern = Pattern.compile("^[A-Za-z0-9!@#\\$%\\^&\\*\\(\\)~`:/,\\.\\?\"-=_\\+]{10,128}$");
 
-        try {
-            if (!this.inputValidation(userPattern, this.userField.getText()) || !this.inputValidation(passwordPattern, String.valueOf(this.passField.getPassword()))) {
-                throw new InputValidationException("Invalid input.");
-            }
-
+        if (!this.inputValidation(userPattern, this.userField.getText())
+                || !this.inputValidation(passwordPattern, String.valueOf(this.passField.getPassword()))) {
+            throw new InputValidationException("Invalid input.");
+        } else {
             this.username = this.userField.getText();
             this.masterPassword = new Password(new String(this.passField.getPassword()));
-            int dbResult = userDatabase.verifyCredentials(this.username, this.masterPassword);
-            if (dbResult == Database.LOGIN_GOOD) {
-                this.userDatabase.setUsername(this.username);
-                this.userDatabase.setPassword(this.masterPassword);
-                this.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                this.window.setInstance("portal");
-                this.frame.dispose();
-            } else if (dbResult == Database.REGISTER) {
-                JOptionPane.showMessageDialog(this.frame, "Please input your desired password.",
-                            "Registration Instructions", JOptionPane.OK_OPTION);
-                this.passField.setText("");
-                this.masterPassword = new Password();
-                this.passField.setEchoChar((char) 0);
-                this.loginButton.setText("Register");
+
+            // SwingWorkers are not reusable.
+            this.taskManager = new DatabaseTaskManager(this.window, this.userDatabase, this.passField, this.loginButton);
+
+            // prevents interleaving
+            synchronized (this.taskManager) {
+                this.taskManager.setChoice(TaskManager.VERIFY_USER);
+                this.taskManager.setParameters(new Object[] {this.username, this.masterPassword, this.frame});
             }
-        } catch (InputValidationException err) {
-            if (this.userField.getText().equals("")) {
-                int entry = JOptionPane.showConfirmDialog(this.frame,
-                        err.getMessage() + "\nWould you like to register?", "No Username Input",
-                        JOptionPane.YES_NO_OPTION);
-                if (entry == JOptionPane.YES_OPTION) {
-                    JOptionPane.showMessageDialog(this.frame, "Please input your desired username and password.",
-                            "Registration Instructions", JOptionPane.OK_OPTION);
-                    this.passField.setEchoChar((char) 0);
-                    this.loginButton.setText("Register");
-                }
-            } else {
-                JOptionPane.showMessageDialog(this.frame, err.getMessage(), "Input Validation", JOptionPane.OK_OPTION);
-            }
-        }
+
+            this.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            this.taskManager.execute();
+        }   
     }
 }
