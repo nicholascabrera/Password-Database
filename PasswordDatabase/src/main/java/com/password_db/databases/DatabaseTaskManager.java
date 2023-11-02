@@ -52,7 +52,7 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
      * <html>
      *   <ul>
      *     <li>VERIFY_USER: [0] String Username, [1] Password Master Password, [2] JFrame Current Frame</li>
-     *     <li>ADD_USER</li>
+     *     <li>ADD_USER: [0] String Username, [1] Password Master Password, [2] Character Default Echo Character</li>
      *     <li>PULL_PASSWORDS</li>
      *     <li>STORE_PASSWORD</li>
      *     <li>NO_CHOICE</li>
@@ -144,6 +144,9 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
                 } else {
                     JOptionPane.showMessageDialog(null, "Registration Unsuccessful.", "Registration", JOptionPane.OK_OPTION);
                 }
+
+                this.passField.setEchoChar(((char)parameters[2]));
+                this.loginButton.setText("Log In");
                 break;
 
             case PULL_PASSWORDS:

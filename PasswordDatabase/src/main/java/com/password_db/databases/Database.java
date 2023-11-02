@@ -176,7 +176,6 @@ public class Database {
          } else {
             throw new IncorrectUsernameException("This username doesn't exist.");   //if the username doesn't exist, then throw exception
          }
-
       } catch (SQLException exception){
          exception.printStackTrace();
       }

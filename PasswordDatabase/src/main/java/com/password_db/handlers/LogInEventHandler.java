@@ -49,7 +49,12 @@ public class LogInEventHandler implements ActionListener, KeyListener {
     public void actionPerformed(ActionEvent e){
         if(e.getActionCommand() == "login"){
             if(this.passField.getEchoChar() == (char)0 && this.loginButton.getText().equals("Register")){
-                this.registerUser();
+                try{
+                    this.registerUser();
+                } catch (InputValidationException err){
+                    JOptionPane.showMessageDialog(this.frame, err.getMessage(), "Input Validation", JOptionPane.OK_OPTION);
+                    userField.setText("");
+                }
             } else {
                 try{
                     this.verifyLogin();
@@ -98,37 +103,29 @@ public class LogInEventHandler implements ActionListener, KeyListener {
         return false;
     }
 
-    private void registerUser(){
+    private void registerUser() throws InputValidationException {
         //I need to perform Input Validation here.
         Pattern userPattern = Pattern.compile("^[A-Za-z0-9.]{3,20}$");
         Pattern passwordPattern = Pattern.compile("^[A-Za-z0-9!@#\\$%\\^&\\*\\(\\)~`:/,\\.\\?\"-=_\\+]{10,128}$");
 
-        try {
-            if (!this.inputValidation(userPattern, this.userField.getText()) || !this.inputValidation(passwordPattern, String.valueOf(this.passField.getPassword()))) {
-                throw new InputValidationException("Invalid input.");
-            }
-
-            this.username = this.userField.getText();
-            this.masterPassword = new Password(new String(this.passField.getPassword()));
-
-            //SwingWorkers are not reusable.
-            this.taskManager = new DatabaseTaskManager(this.window, this.userDatabase, this.passField, this.loginButton);
-
-            //prevents interleaving
-            synchronized(this.taskManager){
-                this.taskManager.setChoice(TaskManager.ADD_USER);
-                this.taskManager.setParameters(new Object[]{this.username, this.masterPassword, this.frame});
-            }
-
-            this.taskManager.execute();
-
-        } catch (InputValidationException e){
-            JOptionPane.showMessageDialog(this.frame, e.getMessage(), "Input Validation", JOptionPane.OK_OPTION);
-            userField.setText("");
+        if (!this.inputValidation(userPattern, this.userField.getText())
+                || !this.inputValidation(passwordPattern, String.valueOf(this.passField.getPassword()))) {
+            throw new InputValidationException("Invalid input.");
         }
 
-        this.passField.setEchoChar(this.defaultEcho);
-        this.loginButton.setText("Log In");
+        this.username = this.userField.getText();
+        this.masterPassword = new Password(new String(this.passField.getPassword()));
+
+        // SwingWorkers are not reusable.
+        this.taskManager = new DatabaseTaskManager(this.window, this.userDatabase, this.passField, this.loginButton);
+
+        // prevents interleaving
+        synchronized (this.taskManager) {
+            this.taskManager.setChoice(TaskManager.ADD_USER);
+            this.taskManager.setParameters(new Object[] {this.username, this.masterPassword, defaultEcho});
+        }
+
+        this.taskManager.execute();
     }
 
     private void verifyLogin() throws InputValidationException{
