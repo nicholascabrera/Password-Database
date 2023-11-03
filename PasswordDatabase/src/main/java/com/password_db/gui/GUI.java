@@ -397,9 +397,11 @@ public class GUI {
 
         final JButton accountButton = new JButton("Account");
         this.configureButton(accountButton);
+        accountButton.setActionCommand("account");
 
         final JButton settingsButton = new JButton("Settings");
         this.configureButton(settingsButton);
+        settingsButton.setActionCommand("settings");
 
         final JButton generateButton = new JButton("Generate");
         this.configureButton(generateButton);
@@ -420,6 +422,8 @@ public class GUI {
         signoutButton.addActionListener(this.portalHandler);
         generateButton.addActionListener(this.portalHandler);
         exitButton.addActionListener(this.portalHandler);
+        accountButton.addActionListener(this.portalHandler);
+        settingsButton.addActionListener(this.portalHandler);
         portalFrame.addKeyListener(this.portalHandler);
 
         menuPane.add(accountButton);
@@ -463,6 +467,8 @@ public class GUI {
         content.setBackground(this.paneColor);
 
         JTextField search = new JTextField(preferedSize);
+
+        search.setText("This feature is currently in development and is inoperable.");
         
         search.setMinimumSize(new Dimension(preferedSize, 20));
         search.setPreferredSize(new Dimension(preferedSize, 20));

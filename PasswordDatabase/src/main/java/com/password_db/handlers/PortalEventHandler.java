@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import com.password_db.cryptography.Password;
 import com.password_db.databases.Database;
@@ -43,6 +44,8 @@ public class PortalEventHandler implements ActionListener, KeyListener  {
             this.window.setUsername("");
             this.window.setPassword(new Password());
             System.exit(0);
+        } else if(e.getActionCommand() == "account" || e.getActionCommand() == "settings"){
+            JOptionPane.showMessageDialog(this.portalFrame, "This feature is currently in development and is inoperable.", "In Development!", JOptionPane.OK_OPTION);
         }
     }
 
