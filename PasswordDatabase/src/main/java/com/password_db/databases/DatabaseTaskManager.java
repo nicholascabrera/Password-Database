@@ -91,11 +91,9 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
                 try {
                     this.databaseLogInStatus = database.verifyCredentials((String) parameters[0], (Password) parameters[1]);
                 } catch (IncorrectUsernameException exception) {
-                    ((JFrame)parameters[2]).setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                     int entry = JOptionPane.showConfirmDialog(null,
                             exception.getMessage() + "\nWould you like to register with this username?",
                             "Invalid Username", JOptionPane.YES_NO_OPTION);
-                    
                     if (entry == JOptionPane.YES_OPTION) {
                         this.databaseLogInStatus = LogIn.REGISTER;
                     }
@@ -121,6 +119,7 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
     public void done(){
         switch(choice){
             case VERIFY_USER:
+                ((JFrame)parameters[2]).setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 LogIn dbResult = this.getVerification();
 
                 if (dbResult == LogIn.LOGIN_GOOD) {
@@ -150,17 +149,10 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
                 break;
 
             case PULL_PASSWORDS:
-                try{
-                    this.databaseReturnRecords = database.pullAllPasswords();
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
                 break;
 
             case STORE_PASSWORD:
-                this.databaseReturnBoolean = database.storeGeneratedPassword((String)parameters[0], (String)parameters[1], (String)parameters[2], (String)parameters[3], (String)parameters[4], (String)parameters[5]);
                 break;
-
             default:
                 break;
         }

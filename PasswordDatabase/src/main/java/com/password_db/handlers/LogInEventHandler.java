@@ -115,16 +115,12 @@ public class LogInEventHandler implements ActionListener, KeyListener {
 
         this.username = this.userField.getText();
         this.masterPassword = new Password(new String(this.passField.getPassword()));
+        this.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
         // SwingWorkers are not reusable.
         this.taskManager = new DatabaseTaskManager(this.window, this.userDatabase, this.passField, this.loginButton);
-
-        // prevents interleaving
-        synchronized (this.taskManager) {
-            this.taskManager.setChoice(TaskManager.ADD_USER);
-            this.taskManager.setParameters(new Object[] {this.username, this.masterPassword, defaultEcho});
-        }
-
+        this.taskManager.setChoice(TaskManager.VERIFY_USER);
+        this.taskManager.setParameters(new Object[] { this.username, this.masterPassword, this.defaultEcho });
         this.taskManager.execute();
     }
 
@@ -139,17 +135,12 @@ public class LogInEventHandler implements ActionListener, KeyListener {
         } else {
             this.username = this.userField.getText();
             this.masterPassword = new Password(new String(this.passField.getPassword()));
+            this.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
             // SwingWorkers are not reusable.
             this.taskManager = new DatabaseTaskManager(this.window, this.userDatabase, this.passField, this.loginButton);
-
-            // prevents interleaving
-            synchronized (this.taskManager) {
-                this.taskManager.setChoice(TaskManager.VERIFY_USER);
-                this.taskManager.setParameters(new Object[] {this.username, this.masterPassword, this.frame});
-            }
-
-            this.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            this.taskManager.setChoice(TaskManager.VERIFY_USER);
+            this.taskManager.setParameters(new Object[] {this.username, this.masterPassword, this.frame});
             this.taskManager.execute();
         }   
     }
