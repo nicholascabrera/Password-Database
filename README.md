@@ -14,7 +14,7 @@ Users may exit the application upon completing their business with the Password 
 ## Features
 The Password Database sports several interesting features, the foremost listed here:
 1. Secure Username and Password Verification via a randomly salted Argon2 Password Hash offered by the Bouncy Castle JCA provider
-2. Clean and easy-to-navigate GUI via Java Swing
+2. Clean, easy-to-navigate, and concurrent GUI via Java Swing and Multithreading
 3. AES Encrypted and Securely Random Password Generation via the JCA
 4. MySQL Database Storage via JDBC
 5. Secure Anti-SQL Injection techniques such as Input Verification with regex, Limited Views and Permissions, and Parameterized Queries
