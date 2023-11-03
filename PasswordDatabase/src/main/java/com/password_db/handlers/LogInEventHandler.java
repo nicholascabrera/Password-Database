@@ -50,15 +50,19 @@ public class LogInEventHandler implements ActionListener, KeyListener {
         if(e.getActionCommand() == "login"){
             if(this.passField.getEchoChar() == (char)0 && this.loginButton.getText().equals("Register")){
                 try{
+                    this.loginButton.setEnabled(false);
                     this.registerUser();
                 } catch (InputValidationException err){
+                    this.loginButton.setEnabled(true);
                     JOptionPane.showMessageDialog(this.frame, err.getMessage(), "Input Validation", JOptionPane.OK_OPTION);
                     userField.setText("");
                 }
             } else {
                 try{
+                    this.loginButton.setEnabled(false);
                     this.verifyLogin();
                 } catch (InputValidationException err) {
+                    this.loginButton.setEnabled(true);
                     if (this.userField.getText().equals("")) {
                         int entry = JOptionPane.showConfirmDialog(this.frame,
                                 err.getMessage() + "\nWould you like to register?", "No Username Input",
@@ -86,7 +90,7 @@ public class LogInEventHandler implements ActionListener, KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
-        if(e.getKeyChar() == '\n'){
+        if(e.getKeyChar() == '\n' && loginButton.isEnabled()){
             this.actionPerformed(new ActionEvent(e.getSource(), e.getID(), "login"));
         }
     }

@@ -4,9 +4,12 @@ import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.regex.Pattern;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import com.password_db.databases.Database;
+import com.password_db.databases.DatabaseTaskManager;
+import com.password_db.databases.TaskManager;
 import com.password_db.exceptions.InputValidationException;
 import com.password_db.gui.GUI;
 
@@ -57,7 +60,7 @@ public class Password {
         this.evaluate();
     }
 
-    public void init(Database database, GUI window) throws Exception{
+    public void init(Database database, GUI window, JFrame frame) throws Exception{
         String website = this.getWebsite();
         if(website.equals("")){
             return;
@@ -98,14 +101,12 @@ public class Password {
             byte[] hashSalt = Base64.getDecoder().decode("ABCDEFGHIJKLMNOP");
             String id = s.argonHash(identifier, hashSalt);     // ID has been created. It is ready to store.
 
-            // perform storing operations.
-            if(database.storeGeneratedPassword(id, website, username, 
-                Base64.getEncoder().encodeToString(encryptedPassword), 
-                Base64.getEncoder().encodeToString(salt), 
-                Base64.getEncoder().encodeToString(encryptedKey)))
-            {
-                System.out.println("Data storage completed successfuly.");
-            }
+            // perform storing operations in another thread.
+            DatabaseTaskManager taskManager = new DatabaseTaskManager(window, database);
+            taskManager.setChoice(TaskManager.STORE_PASSWORD);
+            taskManager.setParameters(new Object[]{id, website, username, Base64.getEncoder().encodeToString(encryptedPassword), 
+                Base64.getEncoder().encodeToString(salt), Base64.getEncoder().encodeToString(encryptedKey), frame});
+            taskManager.execute();
         }
     }
 

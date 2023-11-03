@@ -2,7 +2,9 @@ package com.password_db.databases;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
+import javax.swing.JTable;
 import javax.swing.SwingWorker;
+import javax.swing.table.DefaultTableModel;
 
 import java.awt.Cursor;
 
@@ -35,6 +37,11 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
         this.database = database;
     }
 
+    public DatabaseTaskManager(GUI window, Database database){
+        this.window = window;
+        this.database = database;
+    }
+
     public DatabaseTaskManager(GUI window, Database database, JPasswordField passField, JButton loginButton){
         this.window = window;
         this.database = database;
@@ -53,8 +60,8 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
      *   <ul>
      *     <li>VERIFY_USER: [0] String Username, [1] Password Master Password, [2] JFrame Current Frame</li>
      *     <li>ADD_USER: [0] String Username, [1] Password Master Password, [2] Character Default Echo Character</li>
-     *     <li>PULL_PASSWORDS</li>
-     *     <li>STORE_PASSWORD</li>
+     *     <li>PULL_PASSWORDS: [0] JTable Password Database Table, [1] JFrame Current Frame</li>
+     *     <li>STORE_PASSWORD: [0] String ID, [1] String Website, [2] String Username, [3] String Password, [4] String Salt, [5] String Key, [6] JFrame Current Frame</li>
      *     <li>NO_CHOICE</li>
      *   </ul>
      * </html>
@@ -149,10 +156,34 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
                 break;
 
             case PULL_PASSWORDS:
+                Record records[] = this.getRecords();
+                DefaultTableModel tableModel = (DefaultTableModel)((JTable)this.parameters[0]).getModel();
+
+                for(int record = 0; record < records.length; record++){
+                    Object[] row = new Object[3];
+                    for(int field = 0; field < 3; field ++){
+                        row[field] = records[record].getRecord()[field];
+                    }
+                    
+                    tableModel.addRow(row);
+                }
+                ((JFrame)parameters[1]).setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 break;
 
             case STORE_PASSWORD:
+                if(this.isPasswordStored()){
+                    System.out.println("Data storage completed successfuly.");
+                }
+
+                ((JFrame)parameters[6]).setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                
+                try {
+                    this.window.fillTable(((JFrame)parameters[6]));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
+
             default:
                 break;
         }

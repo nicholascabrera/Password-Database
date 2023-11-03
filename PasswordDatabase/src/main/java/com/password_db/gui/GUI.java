@@ -1,5 +1,6 @@
 package com.password_db.gui;
 
+import java.awt.Cursor;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -28,6 +29,7 @@ import javax.swing.table.TableColumn;
 import com.password_db.cryptography.Password;
 import com.password_db.databases.Database;
 import com.password_db.databases.DatabaseTaskManager;
+import com.password_db.databases.TaskManager;
 import com.password_db.handlers.LogInEventHandler;
 import com.password_db.handlers.PortalEventHandler;
 
@@ -294,40 +296,14 @@ public class GUI {
         });
     }
 
-    public void fillTable(DatabaseTaskManager taskManager) throws Exception{
-        Record records[] = database.pullAllPasswords();
-        
-        String recordsString[][] = new String[records.length][3];
+    public void fillTable(JFrame frame) throws Exception{
+        DefaultTableModel model = (DefaultTableModel) this.passwordTable.getModel();
+        model.setRowCount(0);
 
-        for(int record = 0; record < records.length; record++){
-            for(int field = 0; field < 3; field ++){
-                recordsString[record][field] = records[record].getRecord()[field];
-            }
-
-        }
-        String fieldNames[] = {"Application", "Username", "Password"};
-
-        JTable table = new JTable(recordsString, fieldNames);
-        DefaultTableModel tableModel = new DefaultTableModel(recordsString, fieldNames) {
-
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                if(this.getColumnName(column) == fieldNames[2]){
-                    return false;
-                }
-                return true;
-            }
-        };
-        
-        table.setModel(tableModel);
-
-        this.passwordTable = table;
-        this.refreshTable();
-    }
-
-    public void refreshTable(){
-        this.view = new JScrollPane(this.passwordTable);
-        this.passwordTable.setFillsViewportHeight(true);
+        DatabaseTaskManager taskManager = new DatabaseTaskManager(database);
+        taskManager.setChoice(TaskManager.PULL_PASSWORDS);
+        taskManager.setParameters(new Object[]{this.passwordTable, frame});
+        taskManager.execute();
     }
 
     public void setAbsoluteSize(JPanel panel, Dimension dimension){
@@ -446,7 +422,6 @@ public class GUI {
         exitButton.addActionListener(this.portalHandler);
         portalFrame.addKeyListener(this.portalHandler);
 
-
         menuPane.add(accountButton);
         menuPane.add(settingsButton);
         menuPane.add(generateButton);
@@ -493,15 +468,32 @@ public class GUI {
         search.setPreferredSize(new Dimension(preferedSize, 20));
         search.setMaximumSize(new Dimension(preferedSize, 20));
 
-        this.fillTable(new DatabaseTaskManager(this.database));
+        //temporarily populate the table with nothing
+        String recordsString[][] = new String[0][3];
+        String fieldNames[] = {"Application", "Username", "Password"};
+        this.passwordTable = new JTable(recordsString, fieldNames);
+
+        DefaultTableModel tableModel = new DefaultTableModel(recordsString, fieldNames) {
+
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        if(this.getColumnName(column) == fieldNames[2]){
+                            return false;
+                        }
+                        return true;
+                    }
+                };
+                
+        this.passwordTable.setModel(tableModel);
+
+        this.view = new JScrollPane(this.passwordTable);
+        this.passwordTable.setFillsViewportHeight(true);
 
         TableColumn column = this.passwordTable.getColumnModel().getColumn(0);
         column.setPreferredWidth(column.getWidth() - 90);
 
         column = this.passwordTable.getColumnModel().getColumn(1);
         column.setPreferredWidth(column.getWidth() - 90);
-
-        this.refreshTable();
 
         this.view.setMinimumSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
         this.view.setPreferredSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
@@ -530,9 +522,7 @@ public class GUI {
 
 
         // BUBBLE PANE
-
         bubblePane.add(Box.createRigidArea(new Dimension(buttonWidth + buttonWidth, 0)));
-        
 
         containerPane.add(Box.createGlue());
         containerPane.add(menuPane);
@@ -554,6 +544,9 @@ public class GUI {
 
         portalFrame.pack();
         portalFrame.setVisible(true);
+                
+        portalFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        this.fillTable(portalFrame);
     }
 
     public String getUsername(){
