@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Base64;
 
 import javax.swing.JOptionPane;
@@ -304,7 +305,7 @@ public class Database {
       return keysAndSalts;
    }
 
-   public Record[] pullAllPasswords() throws Exception{
+   public ArrayList<Record> pullAllPasswords() throws Exception{
       this.processStatus = ONGOING;
       // in order to pull the passwords, the reader will read the recorded username and website from website_users
       // concatenate them with the master username and master password the user provides, then checks to see if it matches the 
@@ -314,7 +315,7 @@ public class Database {
       SecureObject s = new SecureObject();
       s.init();
 
-      Record records[] = new Record[0];
+      ArrayList<Record> records = new ArrayList<Record>();
 
       try (
          Connection conn = DriverManager.getConnection(
@@ -355,7 +356,7 @@ public class Database {
 
                   String decryptedString = s.decrypt(Base64.getDecoder().decode(pulledPassword), Base64.getDecoder().decode(decryptedKey), Base64.getDecoder().decode(salt));
                   
-                  records = Record.append(records, new Record(website, pulledUser, decryptedString));
+                  records.add(new Record(website, pulledUser, decryptedString));
                } else {
                   System.out.println("Couldn't pull the key.");
                }

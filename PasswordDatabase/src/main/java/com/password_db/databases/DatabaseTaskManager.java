@@ -7,6 +7,7 @@ import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.Cursor;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -31,7 +32,7 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
     //get the return values from the database
     private boolean databaseReturnBoolean;
     private LogIn databaseLogInStatus;
-    private Record[] databaseReturnRecords;
+    private ArrayList<Record> databaseReturnRecords;
 
     public DatabaseTaskManager(Database database){
         this.database = database;
@@ -87,7 +88,7 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
         return this.databaseLogInStatus;
     }
 
-    public Record[] getRecords(){
+    public ArrayList<Record> getRecords(){
         return this.databaseReturnRecords;
     }
 
@@ -156,13 +157,13 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
                 break;
 
             case PULL_PASSWORDS:
-                Record records[] = this.getRecords();
+                ArrayList<Record> records = this.getRecords();
                 DefaultTableModel tableModel = (DefaultTableModel)((JTable)this.parameters[0]).getModel();
 
-                for(int record = 0; record < records.length; record++){
+                for(int record = 0; record < records.size(); record++){
                     Object[] row = new Object[3];
                     for(int field = 0; field < 3; field ++){
-                        row[field] = records[record].getRecord()[field];
+                        row[field] = records.get(record).getRecord()[field];
                     }
                     
                     tableModel.addRow(row);
@@ -176,7 +177,7 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
                 }
 
                 ((JFrame)parameters[6]).setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                
+
                 try {
                     this.window.fillTable(((JFrame)parameters[6]));
                 } catch (Exception e) {
