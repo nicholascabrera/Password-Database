@@ -77,7 +77,7 @@ public class Password {
             this.generatePassword();
         } while (regenerate);
 
-        byte entry = (byte) JOptionPane.showConfirmDialog(null, "Do you want to store your password?", "Store?", 0);
+        byte entry = (byte) JOptionPane.showConfirmDialog(null, "Do you want to store your password?", "Store?", JOptionPane.QUESTION_MESSAGE);
         if (entry == JOptionPane.YES_OPTION) {  // if the user wants to store their password, it must be encrypted.
 
             // prepare to encrypt the password.
@@ -113,7 +113,7 @@ public class Password {
     private String getWebsite() {
         String website = "\n";
         do{
-            String input = JOptionPane.showInputDialog(null, "What website or application is this for?");
+            String input = JOptionPane.showInputDialog(null, "What website or application is this for?", "Purpose", JOptionPane.QUESTION_MESSAGE);
             Pattern inputPattern = Pattern.compile("^[A-Za-z0-9./]{0,20}$");
 
             if(input != null){
@@ -124,7 +124,7 @@ public class Password {
                         website = input;
                     }
                 } catch (InputValidationException e){
-                    JOptionPane.showMessageDialog(null, e.getMessage(), "Input Validation", 0);
+                    JOptionPane.showMessageDialog(null, e.getMessage(), "Input Validation", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
                 website = "";
@@ -139,7 +139,7 @@ public class Password {
         String username = "\n";
 
         do{
-            String input = JOptionPane.showInputDialog(null, "Enter the username you used for the website or application:");
+            String input = JOptionPane.showInputDialog(null, "Enter the username you used for the website or application:", "Username", JOptionPane.QUESTION_MESSAGE);
             Pattern inputPattern = Pattern.compile("^[A-Za-z0-9.]{3,20}$");
 
             if(input != null){
@@ -150,7 +150,7 @@ public class Password {
                         username = input;
                     }
                 } catch (InputValidationException e){
-                    JOptionPane.showMessageDialog(null, e.getMessage(), "Input Validation", 0);
+                    JOptionPane.showMessageDialog(null, e.getMessage(), "Input Validation", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
                 username = "";
@@ -184,7 +184,7 @@ public class Password {
 
             outputMSG = outputMSG.concat("\nGenerate new password?");
             
-            byte entry = (byte) JOptionPane.showConfirmDialog(null, outputMSG, "Password Generated!", 0);
+            byte entry = (byte) JOptionPane.showConfirmDialog(null, outputMSG, "Password Generated!", JOptionPane.QUESTION_MESSAGE);
             this.regenerate = (entry == JOptionPane.YES_OPTION) ? true : false;
         }
     }
@@ -197,7 +197,7 @@ public class Password {
         do {
             //I need to perform input verification here.
             String input = JOptionPane.showInputDialog(
-                null, "Enter your preferred password length.", "Password Length");
+                null, "Enter your preferred password length.", "Password Length", JOptionPane.QUESTION_MESSAGE);
 
             if(input != null){
                 Pattern numPattern = Pattern.compile("^[0-9]?[0-9]?[0-9]$");    //three digit number from 0-999
@@ -209,17 +209,17 @@ public class Password {
                         generate = true;
                         int entry = Integer.parseInt(input);
                         if (entry > 127) {                      //brings upper limit from 999 to 127
-                            JOptionPane.showMessageDialog(null, "Password too long! Try again with less than 128!");
+                            JOptionPane.showMessageDialog(null, "Password too long! Try again with less than 128!", "Error", JOptionPane.WARNING_MESSAGE);
                             this.length = SHOW_AGAIN;
                         } else if (entry < 6) {                 //brings lower limit from 0 to 6
-                            JOptionPane.showMessageDialog(null, "Password too short! Try again with more than 5!");
+                            JOptionPane.showMessageDialog(null, "Password too short! Try again with more than 5!", "Error", JOptionPane.WARNING_MESSAGE);
                             this.length = SHOW_AGAIN;
                         } else {
                             this.length = (byte) entry;         //if the number is within the range 6-127, then we allow it to become length.
                         }
                     }
                 } catch (InputValidationException e) {
-                    JOptionPane.showMessageDialog(null, e.getMessage(), "Invalid Validation", 0);
+                    JOptionPane.showMessageDialog(null, e.getMessage(), "Invalid Validation", JOptionPane.ERROR_MESSAGE);
                     this.length = SHOW_AGAIN;    //sets the length to 5 in preparation to show the password prompt again.
                 }
             } else {
@@ -229,7 +229,7 @@ public class Password {
 
         if(generate){
             byte entry = (byte) JOptionPane.showConfirmDialog(
-                null, "Will your password use upper case letters?","Password Specifications", 0);
+                null, "Will your password use upper case letters?","Password Specifications", JOptionPane.QUESTION_MESSAGE);
             if (entry == JOptionPane.YES_OPTION) {
                 this.upperCase = true;
             } else {
@@ -237,7 +237,7 @@ public class Password {
             }
 
             entry = (byte) JOptionPane.showConfirmDialog(
-                null, "Will your password use lower case letters?","Password Specifications", 0);
+                null, "Will your password use lower case letters?","Password Specifications", JOptionPane.QUESTION_MESSAGE);
             if (entry == JOptionPane.YES_OPTION) {
                 this.lowerCase = true;
             } else {
@@ -245,14 +245,14 @@ public class Password {
             }
 
             entry = (byte) JOptionPane.showConfirmDialog(
-                null, "Will your password use special characters?","Password Specifications", 0);
+                null, "Will your password use special characters?","Password Specifications", JOptionPane.QUESTION_MESSAGE);
             if (entry == JOptionPane.YES_OPTION) {
                 this.specialChars = true;
             } else {
                 this.specialChars = false;
             }
 
-            entry = (byte) JOptionPane.showConfirmDialog(null, "Will your password use numbers?", "Password Specifications", 0);
+            entry = (byte) JOptionPane.showConfirmDialog(null, "Will your password use numbers?", "Password Specifications", JOptionPane.QUESTION_MESSAGE);
             if (entry == JOptionPane.YES_OPTION) {
                 this.numbers = true;
             } else {
@@ -266,7 +266,7 @@ public class Password {
                 throw new InputValidationException("Invalid Input, at least one field must be chosen.");
             }
         } catch (InputValidationException e){
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Invalid Validation", 0);
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Invalid Validation", JOptionPane.ERROR_MESSAGE);
             generate = false;
             evaluate();
         }

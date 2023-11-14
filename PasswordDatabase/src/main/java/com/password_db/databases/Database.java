@@ -211,10 +211,10 @@ public class Database {
          } catch (SQLException exception){
             exception.printStackTrace();
          } catch (IncorrectPasswordException exception){
-            JOptionPane.showMessageDialog(null, exception.getMessage(), "Invalid Password", 0);
+            JOptionPane.showMessageDialog(null, exception.getMessage(), "Invalid Password", JOptionPane.ERROR_MESSAGE);
          } catch (NoPasswordException exception){
             byte entry = (byte) JOptionPane.showConfirmDialog(null, exception.getMessage() + 
-               "\nDo you want to add your currently inputted password?", "No Password.", 0);
+               "\nDo you want to add your currently inputted password?", "No Password.", JOptionPane.QUESTION_MESSAGE);
             if (entry == JOptionPane.YES_OPTION) {
                addCredentials(identifier, username, masterPassword);
             }

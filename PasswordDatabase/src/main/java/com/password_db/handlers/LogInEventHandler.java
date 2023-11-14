@@ -54,7 +54,7 @@ public class LogInEventHandler implements ActionListener, KeyListener {
                     this.registerUser();
                 } catch (InputValidationException err){
                     this.loginButton.setEnabled(true);
-                    JOptionPane.showMessageDialog(this.frame, err.getMessage(), "Input Validation", JOptionPane.OK_OPTION);
+                    JOptionPane.showMessageDialog(this.frame, err.getMessage(), "Input Validation", JOptionPane.ERROR_MESSAGE);
                     userField.setText("");
                 }
             } else {
@@ -66,15 +66,15 @@ public class LogInEventHandler implements ActionListener, KeyListener {
                     if (this.userField.getText().equals("")) {
                         int entry = JOptionPane.showConfirmDialog(this.frame,
                                 err.getMessage() + "\nWould you like to register?", "No Username Input",
-                                JOptionPane.YES_NO_OPTION);
+                                JOptionPane.QUESTION_MESSAGE);
                         if (entry == JOptionPane.YES_OPTION) {
                             JOptionPane.showMessageDialog(this.frame, "Please input your desired username and password.",
-                                    "Registration Instructions", JOptionPane.OK_OPTION);
+                                    "Registration Instructions", JOptionPane.QUESTION_MESSAGE);
                             this.passField.setEchoChar((char) 0);
                             this.loginButton.setText("Register");
                         }
                     } else {
-                        JOptionPane.showMessageDialog(this.frame, err.getMessage(), "Input Validation", JOptionPane.OK_OPTION);
+                        JOptionPane.showMessageDialog(this.frame, err.getMessage(), "Input Validation", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }

@@ -101,7 +101,7 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
                 } catch (IncorrectUsernameException exception) {
                     int entry = JOptionPane.showConfirmDialog(null,
                             exception.getMessage() + "\nWould you like to register with this username?",
-                            "Invalid Username", JOptionPane.YES_NO_OPTION);
+                            "Invalid Username", JOptionPane.QUESTION_MESSAGE);
                     if (entry == JOptionPane.YES_OPTION) {
                         this.databaseLogInStatus = LogIn.REGISTER;
                     }
@@ -137,7 +137,7 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
                     ((JFrame)parameters[2]).dispose();
                 } else if (dbResult == LogIn.REGISTER) {
                     JOptionPane.showMessageDialog(((JFrame)parameters[2]), "Please input your desired password.",
-                            "Registration Instructions", JOptionPane.OK_OPTION);
+                            "Registration Instructions", JOptionPane.QUESTION_MESSAGE);
                     this.passField.setText("");
                     this.database.setPassword(new Password());
                     this.passField.setEchoChar((char) 0);
@@ -147,9 +147,9 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
 
             case ADD_USER:
                 if(this.isUserAdded()){
-                    JOptionPane.showMessageDialog(null, "Registration Successful. Please Log In!", "Registration", JOptionPane.OK_OPTION);
+                    JOptionPane.showMessageDialog(null, "Registration Successful. Please Log In!", "Registration", JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    JOptionPane.showMessageDialog(null, "Registration Unsuccessful.", "Registration", JOptionPane.OK_OPTION);
+                    JOptionPane.showMessageDialog(null, "Registration Unsuccessful.", "Registration", JOptionPane.ERROR_MESSAGE);
                 }
 
                 this.passField.setEchoChar(((char)parameters[2]));

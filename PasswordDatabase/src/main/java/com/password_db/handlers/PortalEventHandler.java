@@ -45,7 +45,7 @@ public class PortalEventHandler implements ActionListener, KeyListener  {
             this.window.setPassword(new Password());
             System.exit(0);
         } else if(e.getActionCommand() == "account" || e.getActionCommand() == "settings"){
-            JOptionPane.showMessageDialog(this.portalFrame, "This feature is currently in development and is inoperable.", "In Development!", JOptionPane.OK_OPTION);
+            JOptionPane.showMessageDialog(this.portalFrame, "This feature is currently in development and is inoperable.", "In Development!", JOptionPane.WARNING_MESSAGE);
         }
     }
 
