@@ -25,7 +25,7 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
     private TaskManager choice;
     private Object[] parameters;
     private Database database;
-    private GUI window;
+    private GUI gui;
     private JPasswordField passField;
     private JButton loginButton;
 
@@ -38,13 +38,13 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
         this.database = database;
     }
 
-    public DatabaseTaskManager(GUI window, Database database){
-        this.window = window;
+    public DatabaseTaskManager(GUI gui, Database database){
+        this.gui = gui;
         this.database = database;
     }
 
-    public DatabaseTaskManager(GUI window, Database database, JPasswordField passField, JButton loginButton){
-        this.window = window;
+    public DatabaseTaskManager(GUI gui, Database database, JPasswordField passField, JButton loginButton){
+        this.gui = gui;
         this.database = database;
         this.passField = passField;
         this.loginButton = loginButton;
@@ -133,7 +133,7 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
                 if (dbResult == LogIn.LOGIN_GOOD) {
                     this.database.setUsername((String)parameters[0]);
                     this.database.setPassword((Password)parameters[1]);
-                    this.window.setInstance("portal");
+                    this.gui.setInstance("portal");
                     ((JFrame)parameters[2]).dispose();
                 } else if (dbResult == LogIn.REGISTER) {
                     JOptionPane.showMessageDialog(((JFrame)parameters[2]), "Please input your desired password.",
@@ -179,7 +179,7 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
                 ((JFrame)parameters[6]).setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
                 try {
-                    this.window.fillTable(((JFrame)parameters[6]));
+                    this.gui.fillTable(((JFrame)parameters[6]));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

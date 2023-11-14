@@ -37,8 +37,8 @@ public class Main {
         // start up window and initialize for login requirement
         SwingUtilities.invokeLater(new Runnable(){
             public void run(){
-                GUI window = new GUI();
-                window.init();
+                GUI gui = new GUI();
+                gui.init();
             }
         });
         

@@ -58,9 +58,9 @@ public class Password {
     public Password(String p){
         this.password123 = p;
         this.evaluate();
-    }
+    } 
 
-    public void init(Database database, GUI window, JFrame frame) throws Exception{
+    public void init(Database database, GUI gui, JFrame frame) throws Exception{
         String website = this.getWebsite();
         if(website.equals("")){
             return;
@@ -102,7 +102,7 @@ public class Password {
             String id = s.argonHash(identifier, hashSalt);     // ID has been created. It is ready to store.
 
             // perform storing operations in another thread.
-            DatabaseTaskManager taskManager = new DatabaseTaskManager(window, database);
+            DatabaseTaskManager taskManager = new DatabaseTaskManager(gui, database);
             taskManager.setChoice(TaskManager.STORE_PASSWORD);
             taskManager.setParameters(new Object[]{id, website, username, Base64.getEncoder().encodeToString(encryptedPassword), 
                 Base64.getEncoder().encodeToString(salt), Base64.getEncoder().encodeToString(encryptedKey), frame});

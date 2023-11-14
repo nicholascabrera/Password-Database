@@ -22,7 +22,7 @@ import com.password_db.gui.GUI;
 
 public class LogInEventHandler implements ActionListener, KeyListener {
 
-    private GUI window;
+    private GUI gui;
     private JFrame frame;
     private Database userDatabase;
     private DatabaseTaskManager taskManager;
@@ -36,8 +36,8 @@ public class LogInEventHandler implements ActionListener, KeyListener {
 
     private char defaultEcho;
 
-    public LogInEventHandler(GUI window, Database userDatabase, JFrame frame, JTextField userField, JPasswordField passField, JButton loginButton){
-        this.window = window;
+    public LogInEventHandler(GUI gui, Database userDatabase, JFrame frame, JTextField userField, JPasswordField passField, JButton loginButton){
+        this.gui = gui;
         this.frame = frame;
         this.userField = userField;
         this.passField = passField;
@@ -122,7 +122,7 @@ public class LogInEventHandler implements ActionListener, KeyListener {
         this.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
         // SwingWorkers are not reusable.
-        this.taskManager = new DatabaseTaskManager(this.window, this.userDatabase, this.passField, this.loginButton);
+        this.taskManager = new DatabaseTaskManager(this.gui, this.userDatabase, this.passField, this.loginButton);
         this.taskManager.setChoice(TaskManager.VERIFY_USER);
         this.taskManager.setParameters(new Object[] { this.username, this.masterPassword, this.defaultEcho });
         this.taskManager.execute();
@@ -142,7 +142,7 @@ public class LogInEventHandler implements ActionListener, KeyListener {
             this.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
             // SwingWorkers are not reusable.
-            this.taskManager = new DatabaseTaskManager(this.window, this.userDatabase, this.passField, this.loginButton);
+            this.taskManager = new DatabaseTaskManager(this.gui, this.userDatabase, this.passField, this.loginButton);
             this.taskManager.setChoice(TaskManager.VERIFY_USER);
             this.taskManager.setParameters(new Object[] {this.username, this.masterPassword, this.frame});
             this.taskManager.execute();
