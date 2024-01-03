@@ -405,8 +405,9 @@ public class Database {
          
          // first, we have to pull all the records from our databases.
          // pull from website_users
-         String query = "SELECT * FROM generated_db.website_users"; // read all
-         PreparedStatement prepped = conn.prepareStatement(query); // use parameterized queries to prevent SQL injection.
+         PreparedStatement prepped = conn.prepareStatement("SELECT * FROM generated_db.website_users WHERE website = ?");
+         // use parameterized queries to prevent SQL injection.
+         prepped.setString(1, application);
          ResultSet website_usersResultSet = prepped.executeQuery(); // execute the read
 
          while(website_usersResultSet.next()){
@@ -419,8 +420,8 @@ public class Database {
 
             if(identifier.equals(ID)){     // the ID is correct, and the stored password belongs to us.
                // pull from e_passwords
-               query = "SELECT * FROM generated_db.e_passwords WHERE ID = ?;"; // read all information at a certain ID
-               prepped = conn.prepareStatement(query);
+               // read all information at a certain ID
+               prepped = conn.prepareStatement("SELECT * FROM generated_db.e_passwords WHERE ID = ?");
                prepped.setString(1, ID);
                ResultSet e_passwordsResultSet = prepped.executeQuery(); // execute read
 
