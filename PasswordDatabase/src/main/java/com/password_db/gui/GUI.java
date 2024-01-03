@@ -496,7 +496,7 @@ public class GUI {
         this.view.setPreferredSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
         this.view.setMaximumSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
         
-        SearchEventHandler searchHandler = new SearchEventHandler(passwordTable, database, portalFrame);
+        SearchEventHandler searchHandler = new SearchEventHandler(this, passwordTable, database, portalFrame);
 
         JTextField search = new JTextField(preferedSize);
 
