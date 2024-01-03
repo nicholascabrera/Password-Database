@@ -335,14 +335,7 @@ public class Database {
          PreparedStatement prepped = conn.prepareStatement(query); // use parameterized queries to prevent SQL injection.
          ResultSet website_usersResultSet = prepped.executeQuery(); // execute the read
 
-
-         // pull from e_passwords
-         query = "SELECT * FROM generated_db.e_passwords;"; // read all
-         prepped = conn.prepareStatement(query);
-         ResultSet e_passwordsResultSet = prepped.executeQuery(); // execute insertion
-         
-
-         while(website_usersResultSet.next() && e_passwordsResultSet.next()){
+         while(website_usersResultSet.next()){
             ID = website_usersResultSet.getString("ID");
             website = website_usersResultSet.getString("website");
             pulledUser = website_usersResultSet.getString("username");
@@ -351,19 +344,29 @@ public class Database {
             identifier = s.argonHash(identifier, hashSalt);
 
             if(identifier.equals(ID)){     // the ID is correct, and the stored password belongs to us.
-               pulledPassword = e_passwordsResultSet.getString("password");   // pull the password
-               ResultSet keyResultSet = pullKey(ID);     // pull the key and salt at that ID
-               if(keyResultSet.next()){
-                  key = keyResultSet.getString("e_key");
-                  salt = keyResultSet.getString("salt");
+               // pull from e_passwords
+               query = "SELECT * FROM generated_db.e_passwords WHERE ID = ?;"; // read all information at a certain ID
+               prepped = conn.prepareStatement(query);
+               prepped.setString(1, ID);
+               ResultSet e_passwordsResultSet = prepped.executeQuery(); // execute read
 
-                  String decryptedKey = s.decrypt(Base64.getDecoder().decode(key), this.getPassword());
+               if(e_passwordsResultSet.next()){
+                  pulledPassword = e_passwordsResultSet.getString("password");   // pull the password
+                  ResultSet keyResultSet = pullKey(ID);     // pull the key and salt at that ID
+                  if(keyResultSet.next()){
+                     key = keyResultSet.getString("e_key");
+                     salt = keyResultSet.getString("salt");
 
-                  String decryptedString = s.decrypt(Base64.getDecoder().decode(pulledPassword), Base64.getDecoder().decode(decryptedKey), Base64.getDecoder().decode(salt));
-                  
-                  records.add(new Record(website, pulledUser, decryptedString));
+                     String decryptedKey = s.decrypt(Base64.getDecoder().decode(key), this.getPassword());
+
+                     String decryptedString = s.decrypt(Base64.getDecoder().decode(pulledPassword), Base64.getDecoder().decode(decryptedKey), Base64.getDecoder().decode(salt));
+                     
+                     records.add(new Record(website, pulledUser, decryptedString));
+                  } else {
+                     System.out.println("Couldn't pull the key.");
+                  }
                } else {
-                  System.out.println("Couldn't pull the key.");
+                  System.out.println("Couldn't pull the password at this ID: " + ID);
                }
             }
          }
@@ -406,14 +409,7 @@ public class Database {
          PreparedStatement prepped = conn.prepareStatement(query); // use parameterized queries to prevent SQL injection.
          ResultSet website_usersResultSet = prepped.executeQuery(); // execute the read
 
-
-         // pull from e_passwords
-         query = "SELECT * FROM generated_db.e_passwords;"; // read all
-         prepped = conn.prepareStatement(query);
-         ResultSet e_passwordsResultSet = prepped.executeQuery(); // execute insertion
-         
-
-         while(website_usersResultSet.next() && e_passwordsResultSet.next()){
+         while(website_usersResultSet.next()){
             ID = website_usersResultSet.getString("ID");
             website = website_usersResultSet.getString("website");
             pulledUser = website_usersResultSet.getString("username");
@@ -422,21 +418,31 @@ public class Database {
             identifier = s.argonHash(identifier, hashSalt);
 
             if(identifier.equals(ID)){     // the ID is correct, and the stored password belongs to us.
-               pulledPassword = e_passwordsResultSet.getString("password");   // pull the password
-               ResultSet keyResultSet = pullKey(ID);     // pull the key and salt at that ID
-               if(keyResultSet.next()){
-                  key = keyResultSet.getString("e_key");
-                  salt = keyResultSet.getString("salt");
+               // pull from e_passwords
+               query = "SELECT * FROM generated_db.e_passwords WHERE ID = ?;"; // read all information at a certain ID
+               prepped = conn.prepareStatement(query);
+               prepped.setString(1, ID);
+               ResultSet e_passwordsResultSet = prepped.executeQuery(); // execute read
 
-                  String decryptedKey = s.decrypt(Base64.getDecoder().decode(key), this.getPassword());
+               if(e_passwordsResultSet.next()){
+                  pulledPassword = e_passwordsResultSet.getString("password");   // pull the password
+                  ResultSet keyResultSet = pullKey(ID);     // pull the key and salt at that ID
+                  if(keyResultSet.next()){
+                     key = keyResultSet.getString("e_key");
+                     salt = keyResultSet.getString("salt");
 
-                  String decryptedString = s.decrypt(Base64.getDecoder().decode(pulledPassword), Base64.getDecoder().decode(decryptedKey), Base64.getDecoder().decode(salt));
-                  
-                  if(website.equals(application)){
-                     records.add(new Record(website, pulledUser, decryptedString));
+                     String decryptedKey = s.decrypt(Base64.getDecoder().decode(key), this.getPassword());
+
+                     String decryptedString = s.decrypt(Base64.getDecoder().decode(pulledPassword), Base64.getDecoder().decode(decryptedKey), Base64.getDecoder().decode(salt));
+                     
+                     if(application.equals(website)){
+                        records.add(new Record(website, pulledUser, decryptedString));
+                     }
+                  } else {
+                     System.out.println("Couldn't pull the key.");
                   }
                } else {
-                  System.out.println("Couldn't pull the key.");
+                  System.out.println("Couldn't pull the password at this ID: " + ID);
                }
             }
          }
