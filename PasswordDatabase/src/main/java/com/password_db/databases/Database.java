@@ -305,6 +305,11 @@ public class Database {
       return keysAndSalts;
    }
 
+   /**
+    * This method returns all the usernames and passwords associated with a certain user.
+    * @return
+    * @throws Exception
+    */
    public ArrayList<Record> pullAllPasswords() throws Exception{
       this.processStatus = ONGOING;
       // in order to pull the passwords, the reader will read the recorded username and website from website_users
@@ -357,6 +362,79 @@ public class Database {
                   String decryptedString = s.decrypt(Base64.getDecoder().decode(pulledPassword), Base64.getDecoder().decode(decryptedKey), Base64.getDecoder().decode(salt));
                   
                   records.add(new Record(website, pulledUser, decryptedString));
+               } else {
+                  System.out.println("Couldn't pull the key.");
+               }
+            }
+         }
+      } catch (SQLException e) {
+         e.printStackTrace();
+      }
+
+      this.processStatus = DONE;
+      return records;
+   }
+
+   /**
+    * This method will pull all usernames and passwords associated with a certain user, as well as a certain application or website.
+    * @param application - the aforementioned application.
+    * @return
+    * @throws Exception
+    */
+   public ArrayList<Record> pullPasswords(String application) throws Exception{
+      this.processStatus = ONGOING;
+      // in order to pull the passwords, the reader will read the recorded username and website from website_users
+      // concatenate them with the master username and master password the user provides, then checks to see if it matches the 
+      // ID recorded in the table. Then and only then, will they reader pull from e_passwords and e_keys.
+      String ID = "", website = "", pulledUser = "", pulledPassword = "", salt = "", key = "";
+      byte[] hashSalt = Base64.getDecoder().decode("ABCDEFGHIJKLMNOP");
+      SecureObject s = new SecureObject();
+      s.init();
+
+      ArrayList<Record> records = new ArrayList<Record>();
+
+      try (
+         Connection conn = DriverManager.getConnection(
+            "jdbc:mysql://localhost:3306/generated_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
+            "reader_uspa", "d7*jNc5dZz9z@") // this is the database reader. It has a limited view (website_users
+            // and e_passwords) and read-only access.
+      ) {
+         
+         // first, we have to pull all the records from our databases.
+         // pull from website_users
+         String query = "SELECT * FROM generated_db.website_users"; // read all
+         PreparedStatement prepped = conn.prepareStatement(query); // use parameterized queries to prevent SQL injection.
+         ResultSet website_usersResultSet = prepped.executeQuery(); // execute the read
+
+
+         // pull from e_passwords
+         query = "SELECT * FROM generated_db.e_passwords;"; // read all
+         prepped = conn.prepareStatement(query);
+         ResultSet e_passwordsResultSet = prepped.executeQuery(); // execute insertion
+         
+
+         while(website_usersResultSet.next() && e_passwordsResultSet.next()){
+            ID = website_usersResultSet.getString("ID");
+            website = website_usersResultSet.getString("website");
+            pulledUser = website_usersResultSet.getString("username");
+
+            String identifier = ((pulledUser.concat(website)).concat(this.getUsername())).concat(this.getPassword().getPassword());
+            identifier = s.argonHash(identifier, hashSalt);
+
+            if(identifier.equals(ID)){     // the ID is correct, and the stored password belongs to us.
+               pulledPassword = e_passwordsResultSet.getString("password");   // pull the password
+               ResultSet keyResultSet = pullKey(ID);     // pull the key and salt at that ID
+               if(keyResultSet.next()){
+                  key = keyResultSet.getString("e_key");
+                  salt = keyResultSet.getString("salt");
+
+                  String decryptedKey = s.decrypt(Base64.getDecoder().decode(key), this.getPassword());
+
+                  String decryptedString = s.decrypt(Base64.getDecoder().decode(pulledPassword), Base64.getDecoder().decode(decryptedKey), Base64.getDecoder().decode(salt));
+                  
+                  if(website.equals(application)){
+                     records.add(new Record(website, pulledUser, decryptedString));
+                  }
                } else {
                   System.out.println("Couldn't pull the key.");
                }

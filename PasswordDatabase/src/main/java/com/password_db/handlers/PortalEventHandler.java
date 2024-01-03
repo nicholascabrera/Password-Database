@@ -18,8 +18,6 @@ public class PortalEventHandler implements ActionListener, KeyListener  {
     private Database generated_db;
     private GUI gui;
 
-    
-
     public PortalEventHandler(GUI gui, JFrame portalFrame, Database generated_db){
         this.portalFrame = portalFrame;
         this.gui = gui;
@@ -28,23 +26,23 @@ public class PortalEventHandler implements ActionListener, KeyListener  {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand() == "logout"){
+        if (e.getActionCommand().equals("logout")){
             this.gui.setUsername("");
             this.gui.setPassword(new Password());
             this.gui.setInstance("login");
             this.portalFrame.dispose();
-        } else if(e.getActionCommand() == "generate"){
+        } else if(e.getActionCommand().equals("generate")){
             Password newPassword = new Password();
             try{
                 newPassword.init(this.generated_db, this.gui, this.portalFrame);
             } catch (Exception err){
                 err.printStackTrace();
             }
-        } else if(e.getActionCommand() == "exit"){
+        } else if(e.getActionCommand().equals("exit")){
             this.gui.setUsername("");
             this.gui.setPassword(new Password());
             System.exit(0);
-        } else if(e.getActionCommand() == "account" || e.getActionCommand() == "settings"){
+        } else if(e.getActionCommand().equals("account") || e.getActionCommand().equals("settings")){
             JOptionPane.showMessageDialog(this.portalFrame, "This feature is currently in development and is inoperable.", "In Development!", JOptionPane.WARNING_MESSAGE);
         }
     }

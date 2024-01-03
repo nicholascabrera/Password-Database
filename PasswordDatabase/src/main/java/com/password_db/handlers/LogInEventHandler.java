@@ -47,7 +47,7 @@ public class LogInEventHandler implements ActionListener, KeyListener {
     }
 
     public void actionPerformed(ActionEvent e){
-        if(e.getActionCommand() == "login"){
+        if(e.getActionCommand().equals("login")){
             if(this.passField.getEchoChar() == (char)0 && this.loginButton.getText().equals("Register")){
                 try{
                     this.loginButton.setEnabled(false);

@@ -1,7 +1,7 @@
 {
     "java.project.sourcePaths": [
         "Password Generator/src",
-        "PasswordDatabase/src/main/java/com/example"
+        "PasswordDatabase/src/main/java/com/password_db"
     ],
     "java.configuration.updateBuildConfiguration": "interactive"
 }

@@ -32,6 +32,7 @@ import com.password_db.databases.DatabaseTaskManager;
 import com.password_db.databases.TaskManager;
 import com.password_db.handlers.LogInEventHandler;
 import com.password_db.handlers.PortalEventHandler;
+import com.password_db.handlers.SearchEventHandler;
 
 public class GUI {
     private final boolean LIGHT_MODE = true;
@@ -390,7 +391,6 @@ public class GUI {
         bubblePane.setLayout(new BoxLayout(bubblePane, BoxLayout.PAGE_AXIS));
         bubblePane.setBackground(this.paneColor);
 
-
         // MENU PANE CREATION
         int buttonWidth = 90;
         int buttonHeight = 43;
@@ -406,7 +406,6 @@ public class GUI {
         final JButton generateButton = new JButton("Generate");
         this.configureButton(generateButton);
         generateButton.setActionCommand("generate");
-
 
         final JButton signoutButton = new JButton("Sign Out");
         this.configureButton(signoutButton);
@@ -466,14 +465,6 @@ public class GUI {
         content.setLayout(new BoxLayout(content, BoxLayout.PAGE_AXIS));
         content.setBackground(this.paneColor);
 
-        JTextField search = new JTextField(preferedSize);
-
-        search.setText("This feature is currently in development and is inoperable.");
-        
-        search.setMinimumSize(new Dimension(preferedSize, 20));
-        search.setPreferredSize(new Dimension(preferedSize, 20));
-        search.setMaximumSize(new Dimension(preferedSize, 20));
-
         //temporarily populate the table with nothing
         String recordsString[][] = new String[0][3];
         String fieldNames[] = {"Application", "Username", "Password"};
@@ -504,6 +495,18 @@ public class GUI {
         this.view.setMinimumSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
         this.view.setPreferredSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
         this.view.setMaximumSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
+        
+        SearchEventHandler searchHandler = new SearchEventHandler(passwordTable, database, portalFrame);
+
+        JTextField search = new JTextField(preferedSize);
+
+        search.setText("Type the website or application you wish to look for.");
+        search.setActionCommand("search");
+        search.addActionListener(searchHandler);
+        
+        search.setMinimumSize(new Dimension(preferedSize, 20));
+        search.setPreferredSize(new Dimension(preferedSize, 20));
+        search.setMaximumSize(new Dimension(preferedSize, 20));
 
         JPanel containerColorRigidVertical = new JPanel();
         containerColorRigidVertical.setBackground(this.transparentColor);
@@ -525,7 +528,6 @@ public class GUI {
         centerPane.add(welcomeWrapper);
         centerPane.add(containerColorRigidVertical);
         centerPane.add(content);
-
 
         // BUBBLE PANE
         bubblePane.add(Box.createRigidArea(new Dimension(buttonWidth + buttonWidth, 0)));

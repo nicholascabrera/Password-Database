@@ -26,5 +26,5 @@ package com.password_db.databases;
  * @see com.password_db.databases.Database
  */
 public enum TaskManager {
-    VERIFY_USER, ADD_USER, PULL_PASSWORDS, STORE_PASSWORD, NO_CHOICE
+    VERIFY_USER, ADD_USER, PULL_PASSWORDS, STORE_PASSWORD, NO_CHOICE, PULL_PASSWORD
 }
