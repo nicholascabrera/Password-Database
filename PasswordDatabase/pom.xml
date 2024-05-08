@@ -4,11 +4,11 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.example</groupId>
-  <artifactId>demo</artifactId>
+  <groupId>com.password_db</groupId>
+  <artifactId>PasswordDatabase</artifactId>
   <version>1.4</version>
 
-  <name>demo</name>
+  <name>PasswordDatabase</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
 
