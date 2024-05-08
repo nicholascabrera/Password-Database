@@ -38,21 +38,4 @@ public class Trie {
 
         current.setWord(true);
     }
-
-    public Trie createTrie(){
-        return this.createExampleTrie();
-    }
-
-    private Trie createExampleTrie(){
-        Trie trie = new Trie();
-
-        trie.insert("Programming");
-        trie.insert("is");
-        trie.insert("a");
-        trie.insert("way");
-        trie.insert("of");
-        trie.insert("life");
-
-        return trie;
-    }
 }
