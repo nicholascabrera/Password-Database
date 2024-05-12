@@ -89,8 +89,14 @@ public class Trie {
         /* we must find all the complete child words that continue from the current node */
         /* then we add those words to a list, and return the list */
         /* a depth first preorder traversal will be used */
-        traversePreOrder("",current);
-        return wordsBeginningWith;
+
+        if(word.length() == 0){
+            traversePreOrder(word, current);
+            return this.getWordsBeginningWith();
+        }
+
+        traversePreOrder(word.substring(0, word.length()-1), current);
+        return this.getWordsBeginningWith();
     }
 
     public void traversePreOrder(String order, TrieNode node) {

@@ -55,16 +55,75 @@ public class trieTests {
 
         trie.traversePreOrder("",trie.getRoot());
 
-        ArrayList<String> o = new ArrayList<String>();
-        o.add("Programming");
-        o.add("is");
-        o.add("a");
-        o.add("way");
-        o.add("of");
-        o.add("life");
+        ArrayList<String> a = new ArrayList<String>();
+        a.add("Programming");
+        a.add("is");
+        a.add("a");
+        a.add("way");
+        a.add("of");
+        a.add("life");
 
-        boolean l = (trie.getWordsBeginningWith().containsAll(o));
+        assertTrue(trie.getWordsBeginningWith().containsAll(a));
+    }
 
-        assertTrue(l);
+    @Test
+    public void whenFindingWordsThatBeginAtTheRoot(){
+        Trie trie = createExampleTrie();
+
+        ArrayList<String> a = new ArrayList<String>();
+        a.add("Programming");
+        a.add("is");
+        a.add("a");
+        a.add("way");
+        a.add("of");
+        a.add("life");
+
+        ArrayList<String> b = trie.findWordsBeginningWith("");
+
+        assertTrue(a.containsAll(b) && a.size() == b.size());
+    }
+
+    @Test
+    public void whenFindingWordsThatBeginWithTheLetterP(){
+        Trie trie = createExampleTrie();
+
+        ArrayList<String> a = new ArrayList<String>();
+        a.add("Programming");
+
+        ArrayList<String> b = trie.findWordsBeginningWith("P");
+
+        assertTrue(a.containsAll(b) && a.size() == b.size());
+    }
+
+    @Test
+    public void whenFindingWordsThatBeginWithTheLetterP_BeforeAndAfterDeletingTheWordProgramming(){
+        Trie trie = createExampleTrie();
+
+        ArrayList<String> a = new ArrayList<String>();
+        a.add("Programming");
+
+        ArrayList<String> b = trie.findWordsBeginningWith("P");
+
+        assertTrue(a.containsAll(b) && a.size() == b.size());
+
+        trie.deleteWord("Programming");
+
+        b = trie.findWordsBeginningWith("P");
+
+        assertFalse(a.containsAll(b) && a.size() == b.size());
+    }
+
+    @Test
+    public void whenFindingWordsThatBeginWithProgram_AfterAddingTheWordProgrammatically(){
+        Trie trie = createExampleTrie();
+        trie.insert("Programmatically");
+
+        ArrayList<String> a = new ArrayList<String>();
+        a.add("Programming");
+        a.add("Programmatically");
+
+        ArrayList<String> b = trie.findWordsBeginningWith("Pro");
+
+        assertTrue(a.containsAll(b) && a.size() == b.size());
     }
 }
