@@ -13,6 +13,12 @@ public class TrieNode {
         this.isWord = false;
     }
 
+    public TrieNode(String content){
+        this.children = new HashMap<Character, TrieNode>();
+        this.content = content;
+        this.isWord = false;
+    }
+
     public TrieNode(String content, boolean isWord){
         this.children = new HashMap<Character, TrieNode>();
         this.content = content;

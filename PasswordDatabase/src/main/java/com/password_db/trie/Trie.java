@@ -1,14 +1,20 @@
 package com.password_db.trie;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Trie {
     private TrieNode root;
+    private ArrayList<String> wordsBeginningWith;
 
     public Trie(){
         this.root = new TrieNode("", false);
+        this.wordsBeginningWith = new ArrayList<>();
     }
 
     public Trie(TrieNode root){
         this.root = root;
+        this.wordsBeginningWith = new ArrayList<>();
     }
 
     public TrieNode getRoot() {
@@ -17,6 +23,14 @@ public class Trie {
 
     public void setRoot(TrieNode root) {
         this.root = root;
+    }
+
+    public ArrayList<String> getWordsBeginningWith() {
+        return wordsBeginningWith;
+    }
+
+    public void setWordsBeginningWith(ArrayList<String> wordsBeginningWith) {
+        this.wordsBeginningWith = wordsBeginningWith;
     }
 
     public boolean isEmpty(){
@@ -28,7 +42,7 @@ public class Trie {
 
         for (char c : word.toCharArray()){
             if (!current.getChildren().containsKey(c)){
-                TrieNode node = new TrieNode();
+                TrieNode node = new TrieNode(Character.toString(c));
                 current.addChild(c, node);
                 current = node;
             } else {
@@ -50,6 +64,45 @@ public class Trie {
         }
 
         return current.getisWord();
+    }
+
+    public ArrayList<String> findWordsBeginningWith(String word){
+        TrieNode current = this.root;
+        ArrayList<String> wordsBeginningWith = new ArrayList<String>();
+
+        /* traverse through the trie until the last character is found */
+        for (char c : word.toCharArray()){
+            if(!current.getChildren().containsKey(c)){
+                /* this means that the searched word isn't in the trie */
+                return wordsBeginningWith;
+            }
+            current = current.getChildren().get(c);
+        }
+
+        /* if all the characters in the searched word are found, then the searched word exists within the trie. */
+        /* if there are no children, only the searched word is returned */
+        if (current.getChildren().isEmpty()){
+            wordsBeginningWith.add(word);
+            return wordsBeginningWith;
+        }
+
+        /* we must find all the complete child words that continue from the current node */
+        /* then we add those words to a list, and return the list */
+        /* a depth first preorder traversal will be used */
+        traversePreOrder("",current);
+        return wordsBeginningWith;
+    }
+
+    public void traversePreOrder(String order, TrieNode node) {
+        if (node.getisWord()){
+            this.wordsBeginningWith.add(order.concat(node.getContent()));
+        }
+        if (node != null) {
+            order += node.getContent();
+            for (HashMap.Entry<Character, TrieNode> entry : node.getChildren().entrySet()){
+                traversePreOrder(order, entry.getValue());
+            }
+        }
     }
 
     public void deleteWord(String word){
