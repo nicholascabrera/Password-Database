@@ -14,7 +14,6 @@ import javax.swing.table.TableModel;
 import com.password_db.databases.Database;
 import com.password_db.databases.DatabaseTaskManager;
 import com.password_db.databases.TaskManager;
-import com.password_db.gui.GUI;
 import com.password_db.trie.Trie;
 
 public class SearchEventHandler implements ActionListener{
@@ -22,11 +21,9 @@ public class SearchEventHandler implements ActionListener{
     private JTable passwordTable;
     private Database database;
     private JFrame frame;
-    private GUI gui;
     private Trie applicationsTrie;
 
-    public SearchEventHandler(GUI gui, JTable passwordTable, Database database, JFrame frame, Trie applicationsTrie){
-        this.gui = gui;
+    public SearchEventHandler(JTable passwordTable, Database database, JFrame frame, Trie applicationsTrie){
         this.database = database;
         this.frame = frame;
         this.passwordTable = passwordTable;
@@ -39,7 +36,7 @@ public class SearchEventHandler implements ActionListener{
             if(((JTextField)e.getSource()).getText().equals("")){
                 try {
                     this.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    gui.fillTable(frame);
+                    this.searchTable("");
                 } catch (Exception err) {
                     err.printStackTrace();
                 }
