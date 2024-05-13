@@ -12,4 +12,8 @@ public class Record {
     public String[] getRecord(){
         return record;
     }
+
+    public String getApplication(){
+        return record[0];
+    }
 }

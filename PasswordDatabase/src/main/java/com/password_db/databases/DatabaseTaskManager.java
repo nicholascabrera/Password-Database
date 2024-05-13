@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 
 import com.password_db.gui.GUI;
 import com.password_db.gui.Record;
-
+import com.password_db.trie.Trie;
 import com.password_db.cryptography.Password;
 import com.password_db.exceptions.IncorrectUsernameException;
 
@@ -33,6 +33,7 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
     private boolean databaseReturnBoolean;
     private LogIn databaseLogInStatus;
     private ArrayList<Record> databaseReturnRecords;
+    private ArrayList<String> allApplicationsThatBeginWith;
 
     public DatabaseTaskManager(Database database){
         this.database = database;
@@ -61,9 +62,10 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
      *   <ul>
      *     <li>VERIFY_USER: [0] String Username, [1] Password Master Password, [2] JFrame Current Frame</li>
      *     <li>ADD_USER: [0] String Username, [1] Password Master Password, [2] Character Default Echo Character</li>
-     *     <li>PULL_PASSWORDS: [0] JTable Password Database Table, [1] JFrame Current Frame</li>
+     *     <li>PULL_PASSWORDS: [0] JTable Password Database Table, [1] JFrame Current Frame, [2] Application Trie</li>
      *     <li>PULL_PASSWORD: [0] JTable Password Database Table, [1] JFrame Current Frame, [2] String Application</li>
      *     <li>STORE_PASSWORD: [0] String ID, [1] String Website, [2] String Username, [3] String Password, [4] String Salt, [5] String Key, [6] JFrame Current Frame</li>
+     *     <li>FIND_APPLICATIONS: [0] JTable Password Database Table, [1] JFrame Current Frame, [2] Trie Applications Trie, [3] String Search Term</li>
      *     <li>NO_CHOICE</li>
      *   </ul>
      * </html>
@@ -79,6 +81,10 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
 
     public boolean isUserAdded(){
         return this.databaseReturnBoolean;
+    }
+
+    public ArrayList<String> getApplications() {
+        return this.allApplicationsThatBeginWith;
     }
 
     public boolean isPasswordStored(){
@@ -120,6 +126,8 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
             case STORE_PASSWORD:
                 this.databaseReturnBoolean = database.storeGeneratedPassword((String)parameters[0], (String)parameters[1], (String)parameters[2], (String)parameters[3], (String)parameters[4], (String)parameters[5]);
                 break;
+            case FIND_APPLICATIONS:
+                this.allApplicationsThatBeginWith = ((Trie)parameters[2]).findWordsBeginningWith((String)parameters[3]);
             default:
                 break;
         }
@@ -147,6 +155,7 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
                     this.passField.setEchoChar((char) 0);
                     this.loginButton.setText("Register");
                 }
+
                 break;
 
             case ADD_USER:
@@ -162,6 +171,7 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
 
             case PULL_PASSWORDS:
                 ArrayList<Record> records = this.getRecords();
+                Trie applicationsTrie = (Trie)this.parameters[2];
                 DefaultTableModel tableModel = (DefaultTableModel)((JTable)this.parameters[0]).getModel();
 
                 for(int record = 0; record < records.size(); record++){
@@ -172,6 +182,11 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
                     
                     tableModel.addRow(row);
                 }
+
+                for (Record r : records){
+                    applicationsTrie.insert(r.getApplication(), r);
+                }
+
                 ((JFrame)parameters[1]).setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 break;
 
@@ -180,15 +195,39 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
                 tableModel = (DefaultTableModel)((JTable)this.parameters[0]).getModel();
 
                 for(int record = 0; record < records.size(); record++){
+
                     Object[] row = new Object[3];
+                    
                     for(int field = 0; field < 3; field ++){
                         row[field] = records.get(record).getRecord()[field];
                     }
                     
                     tableModel.addRow(row);
                 }
+
                 ((JFrame)parameters[1]).setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 break;
+
+            case FIND_APPLICATIONS:
+                ArrayList<String> applications = this.getApplications();
+                tableModel = (DefaultTableModel)((JTable)this.parameters[0]).getModel();
+
+                for(int application = 0; application < applications.size(); application++){
+
+                    Object[] row = new Object[3];
+                    Record r = (((Trie)parameters[2]).getRecordOfApplication(applications.get(application)));
+
+                    for(int field = 0; field < 3; field ++){
+                        row[field] = r.getRecord()[field];
+                    }
+                    
+                    tableModel.addRow(row);
+                }
+
+                ((JFrame)parameters[1]).setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
+                break;
+
             case STORE_PASSWORD:
                 if(this.isPasswordStored()){
                     System.out.println("Data storage completed successfuly.");
@@ -201,6 +240,7 @@ public class DatabaseTaskManager extends SwingWorker<Void, Void>{
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
                 break;
 
             default:

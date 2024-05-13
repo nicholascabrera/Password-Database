@@ -15,6 +15,7 @@ import com.password_db.databases.Database;
 import com.password_db.databases.DatabaseTaskManager;
 import com.password_db.databases.TaskManager;
 import com.password_db.gui.GUI;
+import com.password_db.trie.Trie;
 
 public class SearchEventHandler implements ActionListener{
 
@@ -22,12 +23,14 @@ public class SearchEventHandler implements ActionListener{
     private Database database;
     private JFrame frame;
     private GUI gui;
+    private Trie applicationsTrie;
 
-    public SearchEventHandler(GUI gui, JTable passwordTable, Database database, JFrame frame){
+    public SearchEventHandler(GUI gui, JTable passwordTable, Database database, JFrame frame, Trie applicationsTrie){
         this.gui = gui;
         this.database = database;
         this.frame = frame;
         this.passwordTable = passwordTable;
+        this.applicationsTrie = applicationsTrie;
     }
 
     @Override
@@ -57,13 +60,13 @@ public class SearchEventHandler implements ActionListener{
         }
     }
 
-    private void searchTable(String application) {
+    private void searchTable(String searchTerm) {
         DefaultTableModel model = (DefaultTableModel) this.passwordTable.getModel();
         model.setRowCount(0);
 
         DatabaseTaskManager taskManager = new DatabaseTaskManager(database);
-        taskManager.setChoice(TaskManager.PULL_PASSWORD);
-        taskManager.setParameters(new Object[]{this.passwordTable, this.frame, application});
+        taskManager.setChoice(TaskManager.FIND_APPLICATIONS);
+        taskManager.setParameters(new Object[]{this.passwordTable, this.frame, this.applicationsTrie, searchTerm});
         taskManager.execute();
     }
 }

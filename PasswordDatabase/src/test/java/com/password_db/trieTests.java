@@ -7,18 +7,19 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
+import com.password_db.gui.Record;
 import com.password_db.trie.Trie;
 
 public class trieTests {
     private Trie createExampleTrie(){
         Trie trie = new Trie();
 
-        trie.insert("Programming");
-        trie.insert("is");
-        trie.insert("a");
-        trie.insert("way");
-        trie.insert("of");
-        trie.insert("life");
+        trie.insert("Programming", new Record());
+        trie.insert("is", new Record());
+        trie.insert("a", new Record());
+        trie.insert("way", new Record());
+        trie.insert("of", new Record());
+        trie.insert("life", new Record());
 
         return trie;
     }
@@ -116,7 +117,7 @@ public class trieTests {
     @Test
     public void whenFindingWordsThatBeginWithProgram_AfterAddingTheWordProgrammatically(){
         Trie trie = createExampleTrie();
-        trie.insert("Programmatically");
+        trie.insert("Programmatically", new Record());
 
         ArrayList<String> a = new ArrayList<String>();
         a.add("Programming");
@@ -125,5 +126,26 @@ public class trieTests {
         ArrayList<String> b = trie.findWordsBeginningWith("Pro");
 
         assertTrue(a.containsAll(b) && a.size() == b.size());
+    }
+
+    @Test
+    public void whenFindingWordsThatBeginWithProgram_AfterAddingTheWordProgrammatically_DoesTheTrieRemainTheSame(){
+        Trie trie = createExampleTrie();
+        Trie trie2 = createExampleTrie();
+        trie.insert("Programmatically", new Record());
+        trie2.insert("Programmatically", new Record());
+
+        assertTrue(trie.equals(trie2));
+
+        ArrayList<String> a = new ArrayList<String>();
+        a.add("Programming");
+        a.add("Programmatically");
+        
+        assertTrue(trie.equals(trie2));
+
+        @SuppressWarnings("unused")
+        ArrayList<String> b = trie.findWordsBeginningWith("Pro");
+
+        assertTrue(trie.equals(trie2));
     }
 }

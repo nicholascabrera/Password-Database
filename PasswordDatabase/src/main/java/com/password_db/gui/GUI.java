@@ -33,6 +33,7 @@ import com.password_db.databases.TaskManager;
 import com.password_db.handlers.LogInEventHandler;
 import com.password_db.handlers.PortalEventHandler;
 import com.password_db.handlers.SearchEventHandler;
+import com.password_db.trie.Trie;
 
 public class GUI {
     private final boolean LIGHT_MODE = true;
@@ -43,6 +44,7 @@ public class GUI {
     private PortalEventHandler portalHandler;
     private Database database;
     private String instance;
+    private Trie applicationsTrie;
 
     private JTable passwordTable;
     private JScrollPane view;
@@ -76,6 +78,8 @@ public class GUI {
         this.activeColor = new Color(0x002366);
 
         this.transparentColor = new Color(0, 0, 0, 0);
+
+        this.applicationsTrie = new Trie();
     }
 
     public void init(){
@@ -97,6 +101,10 @@ public class GUI {
             this.paneColor = this.darkPaneColor;
             this.containerColor = this.darkContainerColor;
         }
+    }
+
+    public Trie getApplicationsTrie() {
+        return applicationsTrie;
     }
 
     public boolean getColor(){
@@ -303,7 +311,7 @@ public class GUI {
 
         DatabaseTaskManager taskManager = new DatabaseTaskManager(database);
         taskManager.setChoice(TaskManager.PULL_PASSWORDS);
-        taskManager.setParameters(new Object[]{this.passwordTable, frame});
+        taskManager.setParameters(new Object[]{this.passwordTable, frame, this.applicationsTrie});
         taskManager.execute();
     }
 
@@ -496,7 +504,7 @@ public class GUI {
         this.view.setPreferredSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
         this.view.setMaximumSize(new Dimension(preferedSize, (buttonHeight*5) - 20));
         
-        SearchEventHandler searchHandler = new SearchEventHandler(this, passwordTable, database, portalFrame);
+        SearchEventHandler searchHandler = new SearchEventHandler(this, passwordTable, database, portalFrame, this.applicationsTrie);
 
         JTextField search = new JTextField(preferedSize);
 

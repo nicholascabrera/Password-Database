@@ -3,18 +3,23 @@ package com.password_db.trie;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.password_db.gui.Record;
+
 public class Trie {
     private TrieNode root;
     private ArrayList<String> wordsBeginningWith;
+    private HashMap<String, Record> applicationRecordMappings;
 
     public Trie(){
         this.root = new TrieNode("", false);
         this.wordsBeginningWith = new ArrayList<>();
+        this.applicationRecordMappings = new HashMap<>();
     }
 
     public Trie(TrieNode root){
         this.root = root;
         this.wordsBeginningWith = new ArrayList<>();
+        this.applicationRecordMappings = new HashMap<>();
     }
 
     public TrieNode getRoot() {
@@ -29,16 +34,29 @@ public class Trie {
         return wordsBeginningWith;
     }
 
+    public void resetWordsBeginningWith(){
+        this.wordsBeginningWith = new ArrayList<>();
+    }
+
     public void setWordsBeginningWith(ArrayList<String> wordsBeginningWith) {
         this.wordsBeginningWith = wordsBeginningWith;
+    }
+
+    public HashMap<String, Record> getApplicationRecordMappings() {
+        return applicationRecordMappings;
+    }
+
+    public Record getRecordOfApplication(String word){
+        return applicationRecordMappings.get(word);
     }
 
     public boolean isEmpty(){
         return root.getChildren().isEmpty();
     }
 
-    public void insert(String word){
+    public void insert(String word, Record record){
         TrieNode current = this.root;
+        this.applicationRecordMappings.put(word, record);
 
         for (char c : word.toCharArray()){
             if (!current.getChildren().containsKey(c)){
@@ -69,6 +87,7 @@ public class Trie {
     public ArrayList<String> findWordsBeginningWith(String word){
         TrieNode current = this.root;
         ArrayList<String> wordsBeginningWith = new ArrayList<String>();
+        this.resetWordsBeginningWith();
 
         /* traverse through the trie until the last character is found */
         for (char c : word.toCharArray()){
@@ -138,6 +157,15 @@ public class Trie {
             return current.getChildren().isEmpty();
         }
 
+        return false;
+    }
+
+    public boolean equals (Trie trie){
+        ArrayList<String> a = this.findWordsBeginningWith("");
+        ArrayList<String> b = trie.findWordsBeginningWith("");
+        if(a.containsAll(b) && a.size() == b.size()){
+            return true;
+        }
         return false;
     }
 }
