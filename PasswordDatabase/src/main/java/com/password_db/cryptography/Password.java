@@ -88,7 +88,6 @@ public class Password {
             // encrypt the password. It is ready to store.
             byte[] encryptedPassword = s.encrypt(password123, salt);
 
-
             // prepare to encrypt the key.
             Password masterPassword = database.getPassword();
             String key = s.getKey();
