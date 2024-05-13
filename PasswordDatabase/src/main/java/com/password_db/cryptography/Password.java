@@ -77,7 +77,7 @@ public class Password {
             this.generatePassword();
         } while (regenerate);
 
-        byte entry = (byte) JOptionPane.showConfirmDialog(null, "Do you want to store your password?", "Store?", JOptionPane.QUESTION_MESSAGE);
+        byte entry = (byte) JOptionPane.showConfirmDialog(null, "Do you want to store your password?", "Store?", JOptionPane.YES_NO_OPTION);
         if (entry == JOptionPane.YES_OPTION) {  // if the user wants to store their password, it must be encrypted.
 
             // prepare to encrypt the password.
@@ -184,7 +184,7 @@ public class Password {
 
             outputMSG = outputMSG.concat("\nGenerate new password?");
             
-            byte entry = (byte) JOptionPane.showConfirmDialog(null, outputMSG, "Password Generated!", JOptionPane.QUESTION_MESSAGE);
+            byte entry = (byte) JOptionPane.showConfirmDialog(null, outputMSG, "Password Generated!", JOptionPane.YES_NO_OPTION);
             this.regenerate = (entry == JOptionPane.YES_OPTION) ? true : false;
         }
     }
@@ -229,7 +229,7 @@ public class Password {
 
         if(generate){
             byte entry = (byte) JOptionPane.showConfirmDialog(
-                null, "Will your password use upper case letters?","Password Specifications", JOptionPane.QUESTION_MESSAGE);
+                null, "Will your password use upper case letters?","Password Specifications", JOptionPane.YES_NO_OPTION);
             if (entry == JOptionPane.YES_OPTION) {
                 this.upperCase = true;
             } else {
@@ -237,7 +237,7 @@ public class Password {
             }
 
             entry = (byte) JOptionPane.showConfirmDialog(
-                null, "Will your password use lower case letters?","Password Specifications", JOptionPane.QUESTION_MESSAGE);
+                null, "Will your password use lower case letters?","Password Specifications", JOptionPane.YES_NO_OPTION);
             if (entry == JOptionPane.YES_OPTION) {
                 this.lowerCase = true;
             } else {
@@ -245,14 +245,14 @@ public class Password {
             }
 
             entry = (byte) JOptionPane.showConfirmDialog(
-                null, "Will your password use special characters?","Password Specifications", JOptionPane.QUESTION_MESSAGE);
+                null, "Will your password use special characters?","Password Specifications", JOptionPane.YES_NO_OPTION);
             if (entry == JOptionPane.YES_OPTION) {
                 this.specialChars = true;
             } else {
                 this.specialChars = false;
             }
 
-            entry = (byte) JOptionPane.showConfirmDialog(null, "Will your password use numbers?", "Password Specifications", JOptionPane.QUESTION_MESSAGE);
+            entry = (byte) JOptionPane.showConfirmDialog(null, "Will your password use numbers?", "Password Specifications", JOptionPane.YES_NO_OPTION);
             if (entry == JOptionPane.YES_OPTION) {
                 this.numbers = true;
             } else {
